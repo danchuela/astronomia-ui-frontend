@@ -1,0 +1,30 @@
+node_modules
+dist
+*.local
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Compiled vite config (source of truth: vite.config.ts)
+vite.config.js
+vite.config.d.ts
+
+# IDE
+.idea/
+.vscode/
+
+# Certificados / claves
+*.pem
+*.crt
+*.cer
+*.key
+*.p12
+*.pfx
+
+# Claude Code (local)
+CLAUDE.md
