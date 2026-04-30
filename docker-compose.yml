@@ -1,0 +1,7 @@
+services:
+  frontend:
+    build: .
+    container_name: astronomia-ui-frontend
+    ports:
+      - "5173:80"
+    # No runtime env vars are needed. VITE_API_URL is set at build time.
