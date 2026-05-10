@@ -37,7 +37,7 @@ export function Sidebar({
 
   if (collapsed) {
     return (
-      <div className="w-16 flex flex-col border-r border-border bg-sidebar shrink-0">
+      <div className="w-16 flex flex-col border-r border-border bg-sidebar/80 backdrop-blur-md shrink-0">
         <div className="p-3 flex justify-center border-b border-border">
           <button
             type="button"
@@ -90,13 +90,13 @@ export function Sidebar({
   }
 
   return (
-    <div className="w-72 flex flex-col border-r border-border bg-sidebar shrink-0 scrollbar-thin">
+    <div className="w-72 flex flex-col border-r border-border bg-sidebar/80 backdrop-blur-md shrink-0 scrollbar-thin">
       <div className="p-4 flex items-center justify-between border-b border-border min-h-[60px]">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🌌</span>
+          <img src="/logo-icon.png" alt="" className="w-10 rounded-lg mix-blend-screen" />
           <div>
-            <h2 className="font-semibold text-sidebar-foreground text-sm">astronomIA</h2>
-            <p className="text-xs text-muted-foreground">Análisis de galaxias</p>
+            <img src="/logo-text.png" alt="astronomIA" className="h-4 mb-0.5" />
+            <p className="text-xs text-muted-foreground">Asistente astronómico</p>
           </div>
         </div>
         <button

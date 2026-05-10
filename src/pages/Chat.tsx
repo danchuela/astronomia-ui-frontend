@@ -168,7 +168,7 @@ export default function Chat() {
   }, [activeViewerCoords]);
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar
         conversations={conversations}
         currentId={currentId}
@@ -229,14 +229,53 @@ export default function Chat() {
         <div className="flex-1 overflow-y-auto scrollbar-thin">
           <div className="max-w-3xl mx-auto px-4 py-6">
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-                <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mb-4">
-                  <span className="text-4xl">🌌</span>
-                </div>
-                <h2 className="text-xl font-semibold text-foreground mb-2">astronomIA</h2>
-                <p className="text-muted-foreground max-w-md text-sm">
-                  Visualiza y analiza galaxias en el visor interactivo, o planifica tus noches de observación desde cualquier lugar del mundo.
+              <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+                <img
+                  src="/logo.png"
+                  alt=""
+                  className="w-[24rem] max-w-[80vw] mx-auto mix-blend-screen -mb-4"
+                  style={{ mask: "radial-gradient(ellipse 51% 46% at 47% 49%, black 82%, transparent 100%)", WebkitMask: "radial-gradient(ellipse 51% 46% at 47% 49%, black 82%, transparent 100%)" }}
+                />
+                <img src="/logo-text.png" alt="astronomIA" className="h-10 mx-auto mb-2" />
+                <p className="text-muted-foreground max-w-lg text-sm mb-8">
+                  Tu asistente astronómico con inteligencia artificial. Explora el universo, analiza galaxias y planifica observaciones.
                 </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl w-full mb-8">
+                  <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
+                    <div className="text-2xl mb-2">🔭</div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Visualización</h3>
+                    <p className="text-xs text-muted-foreground">Explora el cielo con el visor interactivo en múltiples longitudes de onda</p>
+                  </div>
+                  <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
+                    <div className="text-2xl mb-2">🌀</div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Análisis</h3>
+                    <p className="text-xs text-muted-foreground">Segmentación, fotometría, morfología y perfiles de brillo de galaxias</p>
+                  </div>
+                  <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
+                    <div className="text-2xl mb-2">🌙</div>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Observación</h3>
+                    <p className="text-xs text-muted-foreground">Planifica tus noches de observación según tu ubicación y condiciones</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap justify-center gap-2 max-w-xl">
+                  {[
+                    "Muéstrame la galaxia de Andrómeda",
+                    "Analiza M51",
+                    "¿Qué puedo observar esta noche desde Madrid?",
+                    "Busca NGC 1300",
+                  ].map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => handleSend(suggestion)}
+                      className="px-3 py-1.5 rounded-full border border-border/40 bg-card/30 backdrop-blur-sm text-xs text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/10 transition-colors"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
               messages.map((msg) => (
@@ -247,7 +286,7 @@ export default function Chat() {
           </div>
         </div>
 
-        <div className="border-t border-border bg-background/95 p-4">
+        <div className="bg-background/70 backdrop-blur-md p-4">
           <div className="max-w-3xl mx-auto">
             <ChatInput onSend={handleSend} disabled={loading} />
           </div>
