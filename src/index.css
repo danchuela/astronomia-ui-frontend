@@ -4,9 +4,9 @@
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
+    --background: 240 33% 5%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 14%;
+    --card: 240 25% 9%;
     --card-foreground: 210 40% 98%;
     --primary: 263 70% 58%;
     --primary-foreground: 210 40% 98%;
@@ -18,7 +18,7 @@
 
     --radius: 0.75rem;
 
-    --sidebar-bg: 222 47% 8%;
+    --sidebar-bg: 240 25% 7%;
     --sidebar-foreground: 215 20% 75%;
     --sidebar-accent: 263 50% 25%;
   }
@@ -29,7 +29,8 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
+    background: transparent;
   }
 }
 
