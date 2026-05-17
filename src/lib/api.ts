@@ -5,6 +5,7 @@ export interface AnalyzePayload {
   message: string;
   messages?: { role: "user" | "assistant"; content: string }[];
   task?: string;
+  options?: { view_target_name?: string };
   view_ra_deg?: number;
   view_dec_deg?: number;
   view_size_arcmin?: number;
@@ -40,7 +41,8 @@ export async function sendMessageStream(
   conversationId: string,
   history: { role: "user" | "assistant"; content: string }[],
   onEvent: (event: StreamEvent) => void,
-  viewSnapshot?: { ra_deg: number; dec_deg: number; size_arcmin: number; hips_id: string; image_data?: string }
+  viewSnapshot?: { ra_deg: number; dec_deg: number; size_arcmin: number; hips_id: string; image_data?: string },
+  viewTargetName?: string
 ): Promise<void> {
   const base = API_BASE.replace(/\/$/, "");
   if (!base) {
@@ -53,6 +55,7 @@ export async function sendMessageStream(
     request_id: requestId,
     message,
     messages: history.length > 0 ? history : undefined,
+    ...(viewTargetName && { options: { view_target_name: viewTargetName } }),
     ...(viewSnapshot && {
       view_ra_deg: viewSnapshot.ra_deg,
       view_dec_deg: viewSnapshot.dec_deg,

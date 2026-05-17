@@ -51,13 +51,17 @@ export default function Chat() {
   const messages = useMemo(() => current?.messages ?? [], [current?.messages]);
 
   // Single viewer source: last resolve message (coordinates present, no analysis image)
-  const activeViewerCoords = useMemo<AladinCoordinates | null>(() => {
+  const activeViewerSource = useMemo<Pick<Message, "coordinates" | "objectName"> | null>(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
       const m = messages[i];
-      if (m.coordinates && !m.imageUrl) return m.coordinates;
+      if (m.coordinates && !m.imageUrl) {
+        return { coordinates: m.coordinates, objectName: m.objectName };
+      }
     }
     return null;
   }, [messages]);
+  const activeViewerCoords = activeViewerSource?.coordinates ?? null;
+  const activeViewerTargetName = activeViewerSource?.objectName;
 
   const refreshConversations = () => setConversations(getConversations());
 
@@ -141,7 +145,7 @@ export default function Chat() {
           updateMessage(convId, assistantId, { content: event.message });
         }
         refreshConversations();
-      }, viewerSnapshot);
+      }, viewerSnapshot, activeViewerTargetName);
     } catch (err) {
       updateMessage(convId, assistantId, {
         content: err instanceof Error ? err.message : "No se pudo obtener respuesta.",
