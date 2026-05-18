@@ -80,6 +80,17 @@ export default function Chat() {
     viewerGetterRef.current = getter;
   }, []);
 
+  const handleViewerToggle = useCallback(async () => {
+    if (viewerOpen && viewerGetterRef.current) {
+      try {
+        await viewerGetterRef.current();
+      } catch {
+        // The cached snapshot is best-effort; collapsing the viewer should still work.
+      }
+    }
+    setViewerOpen((open) => !open);
+  }, [viewerOpen]);
+
   const handleSend = async (text: string) => {
     let convId = currentId;
     if (!convId) {
@@ -182,7 +193,7 @@ export default function Chat() {
         {activeViewerCoords && (
           <div className="border-b border-border shrink-0">
             <button
-              onClick={() => setViewerOpen((o) => !o)}
+              onClick={handleViewerToggle}
               className="w-full flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-colors"
             >
               <svg
