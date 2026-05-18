@@ -60,6 +60,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     coordinates?.hips_id ?? DEFAULT_SURVEY
   );
   const activeSurveyRef = useRef(activeSurvey);
+  const lastGoodSnapshotRef = useRef<ViewSnapshot | null>(null);
   useEffect(() => { activeSurveyRef.current = activeSurvey; }, [activeSurvey]);
 
   const target = coordinates
@@ -67,9 +68,82 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     : objectName ?? "";
   const fovDeg = coordinates ? coordinates.size_arcmin / 60 : DEFAULT_FOV_DEG;
 
+  const readViewerState = useCallback((): Omit<ViewSnapshot, "image_data"> | null => {
+    if (!aladinRef.current) return null;
+    const [ra, dec] = aladinRef.current.getRaDec();
+    const [fovX] = aladinRef.current.getFov();
+    return {
+      ra_deg: ra,
+      dec_deg: dec,
+      size_arcmin: fovX * 60,
+      hips_id: activeSurveyRef.current,
+    };
+  }, []);
+
+  const captureCanvasImage = useCallback(async (): Promise<string | undefined> => {
+    const container = containerRef.current;
+    const canvas = container?.querySelector("canvas") as HTMLCanvasElement | null;
+    if (!container || !canvas || canvas.width <= 0 || canvas.height <= 0) return undefined;
+    if (container.offsetParent === null || canvas.clientWidth <= 0 || canvas.clientHeight <= 0) {
+      return undefined;
+    }
+
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+    if (container.offsetParent === null || canvas.width <= 0 || canvas.height <= 0) {
+      return undefined;
+    }
+
+    const size = Math.min(canvas.width, canvas.height);
+    if (size <= 0) return undefined;
+
+    const crop = document.createElement("canvas");
+    crop.width = size;
+    crop.height = size;
+    const ctx = crop.getContext("2d");
+    if (!ctx) return canvas.toDataURL("image/jpeg", 0.85);
+
+    ctx.drawImage(
+      canvas,
+      (canvas.width - size) / 2,
+      (canvas.height - size) / 2,
+      size,
+      size,
+      0,
+      0,
+      size,
+      size
+    );
+    return crop.toDataURL("image/jpeg", 0.85);
+  }, []);
+
+  const getSnapshot = useCallback(async (): Promise<ViewSnapshot | null> => {
+    const state = readViewerState();
+    if (!state) return null;
+
+    try {
+      const image_data = await captureCanvasImage();
+      if (image_data) {
+        const snapshot = { ...state, image_data };
+        lastGoodSnapshotRef.current = snapshot;
+        return snapshot;
+      }
+    } catch {
+      // Canvas tainted by CORS or temporarily unavailable; fall back below.
+    }
+
+    const cached = lastGoodSnapshotRef.current;
+    if (cached?.image_data && cached.hips_id === state.hips_id) {
+      return { ...state, image_data: cached.image_data };
+    }
+
+    return state;
+  }, [captureCanvasImage, readViewerState]);
+
   useEffect(() => {
     if (!target) return;
     let cancelled = false;
+    lastGoodSnapshotRef.current = null;
 
     async function init() {
       if (!containerRef.current) return;
@@ -81,7 +155,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         if (cancelled || !containerRef.current) return;
 
         const aladin = A.aladin(containerRef.current, {
-          survey: activeSurvey,
+          survey: activeSurveyRef.current,
           fov: fovDeg,
           target,
           projection: "SIN",
@@ -96,34 +170,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         aladinRef.current = aladin;
         setLoading(false);
         if (onViewerReady) {
-          onViewerReady(async () => {
-            if (!aladinRef.current) return null;
-            const [ra, dec] = aladinRef.current.getRaDec();
-            const [fovX] = aladinRef.current.getFov();
-            let image_data: string | undefined;
-            try {
-              // Wait for the next animation frame so WebGL has a populated buffer
-              await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
-              const canvas = containerRef.current?.querySelector("canvas") as HTMLCanvasElement | null;
-              if (canvas) {
-                // Crop a centered square so the analysis image has a consistent aspect ratio
-                const size = Math.min(canvas.width, canvas.height);
-                const crop = document.createElement("canvas");
-                crop.width = size;
-                crop.height = size;
-                const ctx = crop.getContext("2d");
-                if (ctx) {
-                  ctx.drawImage(canvas, (canvas.width - size) / 2, (canvas.height - size) / 2, size, size, 0, 0, size, size);
-                  image_data = crop.toDataURL("image/jpeg", 0.85);
-                } else {
-                  image_data = canvas.toDataURL("image/jpeg", 0.85);
-                }
-              }
-            } catch {
-              // Canvas tainted by CORS — capture not available
-            }
-            return { ra_deg: ra, dec_deg: dec, size_arcmin: fovX * 60, hips_id: activeSurveyRef.current, image_data };
-          });
+          onViewerReady(getSnapshot);
         }
       } catch (err) {
         if (!cancelled) {
@@ -140,11 +187,11 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
       cancelled = true;
       aladinRef.current = null;
     };
-    // Only re-init when target/fov change, not activeSurvey
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [target, fovDeg]);
+  }, [target, fovDeg, getSnapshot, onViewerReady]);
 
   const handleSurveyChange = useCallback((hipsId: string) => {
+    activeSurveyRef.current = hipsId;
+    lastGoodSnapshotRef.current = null;
     setActiveSurvey(hipsId);
     if (aladinRef.current) {
       aladinRef.current.setBaseImageLayer(hipsId);
