@@ -1,5 +1,88 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { HstJwstInfo, Message, ObjectInfo } from "@/types/chat";
+
+const OBSERVATION_FRAME_MIN_HEIGHT = 420;
+const OBSERVATION_FRAME_HEIGHT_EVENT = "astronomia-observation-frame-height";
+
+function withAutoHeightScript(html: string, frameId: string) {
+  const script = `
+<script>
+(() => {
+  const frameId = ${JSON.stringify(frameId)};
+  const sendHeight = () => {
+    const body = document.body;
+    const doc = document.documentElement;
+    const height = Math.max(
+      body ? body.scrollHeight : 0,
+      doc ? doc.scrollHeight : 0,
+      body ? body.offsetHeight : 0,
+      doc ? doc.offsetHeight : 0
+    );
+    window.parent.postMessage({ type: "${OBSERVATION_FRAME_HEIGHT_EVENT}", frameId, height }, "*");
+  };
+
+  window.addEventListener("load", () => {
+    sendHeight();
+    setTimeout(sendHeight, 150);
+    setTimeout(sendHeight, 600);
+    setTimeout(sendHeight, 1200);
+  });
+  document.addEventListener("DOMContentLoaded", sendHeight);
+
+  if ("ResizeObserver" in window) {
+    const observer = new ResizeObserver(sendHeight);
+    observer.observe(document.documentElement);
+    if (document.body) observer.observe(document.body);
+  }
+})();
+</script>`;
+
+  if (html.includes("</body>")) {
+    return html.replace("</body>", `${script}</body>`);
+  }
+  return `${html}${script}`;
+}
+
+function ObservationHtmlFrame({ html }: { html: string }) {
+  const frameId = useMemo(
+    () => `observation-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    []
+  );
+  const [height, setHeight] = useState(OBSERVATION_FRAME_MIN_HEIGHT);
+  const srcDoc = useMemo(() => withAutoHeightScript(html, frameId), [html, frameId]);
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      const data = event.data as { type?: string; frameId?: string; height?: number };
+      if (
+        data?.type !== OBSERVATION_FRAME_HEIGHT_EVENT ||
+        data.frameId !== frameId ||
+        typeof data.height !== "number"
+      ) {
+        return;
+      }
+
+      const nextHeight = Math.max(
+        OBSERVATION_FRAME_MIN_HEIGHT,
+        Math.ceil(data.height)
+      );
+      setHeight((current) => (Math.abs(current - nextHeight) > 4 ? nextHeight : current));
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [frameId]);
+
+  return (
+    <iframe
+      srcDoc={srcDoc}
+      className="mt-3 block w-full border-0 bg-transparent"
+      style={{ height: `${height}px` }}
+      sandbox="allow-scripts"
+      scrolling="no"
+    />
+  );
+}
 
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
   return (
@@ -74,13 +157,16 @@ interface ChatMessageProps {
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  const bubbleWidth = !isUser && message.observationHtml
+    ? "relative left-1/2 w-[min(1120px,calc(100vw-2rem))] max-w-none -translate-x-1/2"
+    : "max-w-[85%]";
 
   return (
     <div
       className={`flex animate-fade-in ${isUser ? "justify-end" : "justify-start"} mb-6`}
     >
       <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+        className={`${bubbleWidth} rounded-2xl px-4 py-3 ${
           isUser
             ? "bg-primary text-primary-foreground"
             : "bg-muted/60 text-foreground border border-border"
@@ -151,12 +237,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           </div>
         )}
         {message.observationHtml && (
-          <iframe
-            srcDoc={message.observationHtml}
-            className="mt-3 w-full rounded-lg border border-border"
-            style={{ height: "420px" }}
-            sandbox="allow-scripts"
-          />
+          <ObservationHtmlFrame html={message.observationHtml} />
         )}
       </div>
     </div>
