@@ -2,6 +2,7 @@ import { lazy, Suspense, useState, useEffect, useRef, useMemo, useCallback } fro
 import { Sidebar } from "@/components/Sidebar";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
+import { HelpButton } from "@/components/HelpButton";
 import {
   getConversations,
   getConversation,
@@ -303,6 +304,8 @@ export default function Chat() {
           </div>
         </div>
       </div>
+      {/* Botón flotante de ayuda — accesible desde cualquier punto del chat. */}
+      <HelpButton />
     </div>
   );
 }
