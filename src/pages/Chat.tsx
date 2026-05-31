@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
 import { HelpButton } from "@/components/HelpButton";
+import { FeedbackButton } from "@/components/FeedbackButton";
 import {
   getConversations,
   getConversation,
@@ -56,6 +57,16 @@ export default function Chat() {
     for (let i = messages.length - 1; i >= 0; i--) {
       const m = messages[i];
       if (m.coordinates && !m.imageUrl) return m.coordinates;
+    }
+    return null;
+  }, [messages]);
+
+  // request_id de la ultima respuesta del bot (para vincular el feedback
+  // libre del modal con la interaccion mas reciente).
+  const latestAssistantRequestId = useMemo<string | null>(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const m = messages[i];
+      if (m.role === "assistant" && m.requestId) return m.requestId;
     }
     return null;
   }, [messages]);
@@ -149,6 +160,9 @@ export default function Chat() {
           if (event.object_info) updateMessage(convId, assistantId, { objectInfo: event.object_info as ObjectInfo });
           if (event.hst_jwst) updateMessage(convId, assistantId, { hstJwst: event.hst_jwst as unknown as HstJwstInfo });
           if (event.object_name) updateMessage(convId, assistantId, { objectName: event.object_name });
+          // Guardamos el request_id en el mensaje del asistente para que el
+          // mini-rating pueda enviar feedback vinculado a esta interaccion.
+          if (event.request_id) updateMessage(convId, assistantId, { requestId: event.request_id });
         } else if (event.type === "error") {
           updateMessage(convId, assistantId, { content: event.message });
         }
@@ -304,7 +318,9 @@ export default function Chat() {
           </div>
         </div>
       </div>
-      {/* Botón flotante de ayuda — accesible desde cualquier punto del chat. */}
+      {/* Botones flotantes: feedback (encima) y ayuda (debajo). Ambos
+          accesibles desde cualquier punto del chat. */}
+      <FeedbackButton latestRequestId={latestAssistantRequestId} />
       <HelpButton />
     </div>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { HstJwstInfo, Message, ObjectInfo } from "@/types/chat";
+import { sendFeedback } from "@/lib/api";
 
 const OBSERVATION_FRAME_MIN_HEIGHT = 420;
 const OBSERVATION_FRAME_HEIGHT_EVENT = "astronomia-observation-frame-height";
@@ -81,6 +82,59 @@ function ObservationHtmlFrame({ html }: { html: string }) {
       sandbox="allow-scripts"
       scrolling="no"
     />
+  );
+}
+
+// Mini-rating con dos botones (pulgar arriba/abajo) que envia un feedback
+// rapido al BFF en cuanto el usuario hace click. Aparece solo en mensajes
+// del bot que ya tienen requestId asignado.
+function MiniRating({ requestId }: { requestId: string }) {
+  const [submitted, setSubmitted] = useState<"up" | "down" | null>(null);
+  const [error, setError] = useState(false);
+
+  async function rate(rating: "up" | "down") {
+    if (submitted) return;
+    try {
+      await sendFeedback({ request_id: requestId, rating });
+      setSubmitted(rating);
+    } catch {
+      setError(true);
+    }
+  }
+
+  if (submitted) {
+    return (
+      <div className="mt-2 text-xs text-muted-foreground italic">
+        Gracias por tu feedback {submitted === "up" ? "👍" : "👎"}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2 flex items-center gap-2">
+      <span className="text-xs text-muted-foreground">¿Te ha sido util?</span>
+      <button
+        type="button"
+        onClick={() => rate("up")}
+        aria-label="Marcar como util"
+        className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs hover:bg-muted/60 hover:border-primary/60 transition-colors"
+      >
+        👍
+      </button>
+      <button
+        type="button"
+        onClick={() => rate("down")}
+        aria-label="Marcar como no util"
+        className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs hover:bg-muted/60 hover:border-primary/60 transition-colors"
+      >
+        👎
+      </button>
+      {error && (
+        <span className="text-[11px] text-red-400">
+          No se pudo enviar, intentalo mas tarde.
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -238,6 +292,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
         )}
         {message.observationHtml && (
           <ObservationHtmlFrame html={message.observationHtml} />
+        )}
+        {/* Mini-rating: solo en mensajes del bot que ya tienen request_id
+            asignado (se asigna cuando termina el stream). */}
+        {!isUser && message.requestId && (
+          <MiniRating requestId={message.requestId} />
         )}
       </div>
     </div>

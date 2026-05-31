@@ -28,6 +28,49 @@ export interface CoordinatesPayload {
   size_arcmin: number;
 }
 
+// ─── Feedback ────────────────────────────────────────────────────────
+// Tipos y funcion para enviar el feedback del usuario al endpoint /feedback
+// del BFF. El BFF lo reenvia a n8n y de ahi a la pestania "feedback" de
+// Google Sheets.
+
+export interface FeedbackPayload {
+  request_id: string;
+  rating: "up" | "down";
+  comment?: string;
+  user_email?: string;
+}
+
+export async function sendFeedback(payload: FeedbackPayload): Promise<void> {
+  const base = API_BASE.replace(/\/$/, "");
+  if (!base) {
+    throw new Error("VITE_API_URL no configurado.");
+  }
+
+  // Limpiamos campos opcionales vacios para no mandar "" innecesariamente.
+  // El BFF tambien hace su limpieza, pero por defensa lo hacemos aqui.
+  const body: FeedbackPayload = {
+    request_id: payload.request_id,
+    rating: payload.rating,
+  };
+  if (payload.comment && payload.comment.trim()) {
+    body.comment = payload.comment.trim();
+  }
+  if (payload.user_email && payload.user_email.trim()) {
+    body.user_email = payload.user_email.trim();
+  }
+
+  const res = await fetch(`${base}/feedback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Error ${res.status} al enviar feedback: ${text.slice(0, 200)}`);
+  }
+}
+
 export type StreamEvent =
   | { type: "status"; message: string }
   | { type: "summary"; summary: string }
