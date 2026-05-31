@@ -64,7 +64,20 @@ export function appendMessage(conversationId: string, message: Message): void {
 export function updateMessage(
   conversationId: string,
   messageId: string,
-  update: Partial<Pick<Message, "content" | "imageUrl" | "coordinates" | "objectInfo" | "hstJwst" | "objectName">>
+  update: Partial<
+    Pick<
+      Message,
+      | "content"
+      | "imageUrl"
+      | "coordinates"
+      | "objectInfo"
+      | "hstJwst"
+      | "objectName"
+      | "observationHtml"
+      | "requestId"
+      | "analysisPlots"
+    >
+  >
 ): void {
   const list = load();
   const conv = list.find((c) => c.id === conversationId);

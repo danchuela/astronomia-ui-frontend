@@ -45,6 +45,9 @@ export interface Message {
   hstJwst?: HstJwstInfo;
   objectName?: string;
   observationHtml?: string;
+  // request_id que asigna el BFF a esta interaccion. Lo usamos para vincular
+  // el feedback del usuario con la consulta concreta a la que se refiere.
+  requestId?: string;
 }
 
 export interface Conversation {
