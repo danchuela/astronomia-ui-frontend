@@ -38,27 +38,27 @@ const HELP_CONTENT: HelpCategory[] = [
         definition:
           "Para ver una galaxia, nebulosa o cúmulo en el visor y opcionalmente extraer sus propiedades morfológicas, fotométricas, isofotas, etc.",
         example:
-          'Ejemplos: "muéstrame M31", "analiza M51", "analiza morfología completa de NGC 1300".',
+          'Ejemplos: "Muéstrame M31", "Analiza M51", "Analiza la morfología completa de NGC 1300".',
       },
       {
         term: "Planificación de una observación",
         definition:
           "Para saber CUÁNDO y CÓMO observar un objeto desde tu ubicación: ventana de visibilidad, altitud máxima, fase lunar, clima, etc. Necesita objeto + lugar + fecha (si no, te los pregunta).",
         example:
-          'Ejemplos: "Quiero ver Júpiter esta noche desde Córdoba", "Carta de visibilidad de M51 desde Madrid mañana", "Cuándo puedo observar Saturno desde Barcelona".',
+          'Ejemplos: "Quiero ver Júpiter esta noche desde Córdoba", "Carta de visibilidad de M51 desde Madrid mañana", "¿Cuándo puedo observar Saturno desde Barcelona?".',
       },
       {
         term: "Pregunta informativa general",
         definition:
           "Para conocer datos básicos de un objeto sin abrir el visor ni planificar.",
         example:
-          'Ejemplos: "¿qué es UGC 10214?", "cuéntame sobre la Galaxia del Sombrero", "cuál es la distancia de M87".',
+          'Ejemplos: "¿Qué es UGC 10214?", "Cuéntame sobre la galaxia del Sombrero", "¿Cuál es la distancia de M87?".',
       },
       {
         term: "Frase mágica: morfología completa",
         definition:
-          'Si pides "analiza morfología completa de X" obtienes el paquete entero: estructura, isofotas, parámetros CAS, perfil de brillo, ajuste de Sérsic y descripción narrativa. Es el análisis más exhaustivo que ofrece la app.',
-        example: 'Ejemplo: "analiza morfología completa de M51".',
+          'Si pides "Analiza la morfología completa de X", obtienes el paquete entero: estructura, isofotas, parámetros CAS, perfil de brillo, ajuste de Sérsic y descripción narrativa. Es el análisis más exhaustivo que ofrece la app.',
+        example: 'Ejemplo: "Analiza la morfología completa de M51".',
       },
     ],
   },
@@ -77,7 +77,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "Estructura",
         definition:
-          "Cómo se distribuye la luz dentro de la galaxia: si hay núcleo concentrado, disco extendido, brazos visibles, o características irregulares.",
+          "Cómo se distribuye la luz dentro de la galaxia: si hay núcleo concentrado, disco extendido, brazos visibles o características irregulares.",
       },
       {
         term: "Elipticidad",
@@ -139,12 +139,12 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "r_half",
         definition:
-          "Radio efectivo o de mitad-luz. Es el radio dentro del cual se encuentra la mitad de la luz total de la galaxia. Sirve como medida estandarizada de tamaño.",
+          "Radio efectivo o radio de semiluz. Es el radio dentro del cual se encuentra la mitad de la luz total de la galaxia. Sirve como medida estandarizada de tamaño.",
       },
       {
         term: "Tipo morfológico (Hubble)",
         definition:
-          "Clasificación clásica de galaxias: E (elípticas), S (espirales), SA (espirales sin barra), SB (espirales barradas), SAB (intermedias), S0 (lenticulares), Irr (irregulares). Las espirales se subdividen en Sa, Sb, Sc según prominencia de brazos.",
+          "Clasificación clásica de galaxias: E (elípticas), S (espirales), SA (espirales sin barra), SB (espirales barradas), SAB (intermedias), S0 (lenticulares), Irr (irregulares). Las espirales se subdividen en Sa, Sb y Sc según la prominencia de los brazos.",
       },
       {
         term: "AGN (núcleo galáctico activo)",
@@ -168,7 +168,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "Carta de visibilidad / carta de observación",
         definition:
-          "Resumen completo de cuándo y cómo podrás ver un objeto desde tu ubicación: a qué hora sale, cuándo culmina, qué altitud alcanzará, cómo afecta la luna y el clima.",
+          "Resumen completo de cuándo y cómo podrás ver un objeto desde tu ubicación: a qué hora sale, cuándo culmina, qué altitud alcanzará y cómo afectan la Luna y el clima.",
         example: 'Ejemplo: "Quiero la carta de visibilidad de M31 desde Granada esta noche".',
       },
       {
@@ -189,7 +189,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "Azimut",
         definition:
-          "Dirección horizontal del objeto, medida en grados desde el Norte hacia el Este. 0°=Norte, 90°=Este, 180°=Sur, 270°=Oeste.",
+          "Dirección horizontal del objeto, medida en grados desde el norte hacia el este. 0° = norte, 90° = este, 180° = sur, 270° = oeste.",
       },
       {
         term: "Airmass (masa de aire)",
@@ -199,7 +199,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "Crepúsculo astronómico",
         definition:
-          "Momento en que el sol está 18° o más por debajo del horizonte. A partir de ahí el cielo está lo suficientemente oscuro para observar objetos débiles como galaxias y nebulosas.",
+          "Momento en que el Sol está 18° o más por debajo del horizonte. A partir de ahí el cielo está lo suficientemente oscuro para observar objetos débiles como galaxias y nebulosas.",
       },
       {
         term: "Noche astronómica",
@@ -219,17 +219,17 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "Contaminación lumínica",
         definition:
-          "Brillo artificial del cielo nocturno por luces urbanas. Reduce el contraste y hace casi invisibles los objetos débiles. Cielos rurales muy oscuros son ideales para fotografía deep-sky.",
+          "Brillo artificial del cielo nocturno por luces urbanas. Reduce el contraste y hace casi invisibles los objetos débiles. Cielos rurales muy oscuros son ideales para fotografía de cielo profundo.",
       },
       {
         term: "Sol de medianoche",
         definition:
-          "Fenómeno en latitudes muy al norte o muy al sur (cerca de los círculos polares) donde, en ciertas fechas, el sol no se pone durante 24 horas. No hay noche y no se puede observar.",
+          "Fenómeno en latitudes muy al norte o muy al sur (cerca de los círculos polares) donde, en ciertas fechas, el Sol no se pone durante 24 horas. No hay noche y no se puede observar.",
       },
       {
         term: "Noche polar",
         definition:
-          "Lo opuesto al sol de medianoche: el sol no sale en 24 horas. Hay oscuridad continua, ideal para observar pero solo si el objeto se eleva sobre el horizonte desde esa latitud extrema.",
+          "Lo opuesto al sol de medianoche: el Sol no sale en 24 horas. Hay oscuridad continua, ideal para observar, pero solo si el objeto se eleva sobre el horizonte desde esa latitud extrema.",
       },
     ],
   },
@@ -238,17 +238,17 @@ const HELP_CONTENT: HelpCategory[] = [
     title: "Fases y observación lunar",
     emoji: "🌙",
     description:
-      "Cómo afecta la luna a tu observación y qué significan las fases que aparecen en las respuestas.",
+      "Cómo afecta la Luna a tu observación y qué significan las fases que aparecen en las respuestas.",
     entries: [
       {
         term: "Iluminación lunar (%)",
         definition:
-          "Porcentaje de la cara visible de la luna que está iluminada por el sol. 0% = luna nueva (invisible), 100% = luna llena. Varía día a día.",
+          "Porcentaje de la cara visible de la Luna que está iluminada por el Sol. 0 % = luna nueva (invisible), 100 % = luna llena. Varía día a día.",
       },
       {
         term: "Luna nueva",
         definition:
-          "Luna no iluminada (0%). La cara visible está completamente en sombra. Es la mejor fase para observar cielo profundo: el cielo está más oscuro.",
+          "Luna no iluminada (0 %). La cara visible está completamente en sombra. Es la mejor fase para observar cielo profundo: el cielo está más oscuro.",
       },
       {
         term: "Creciente / Cuarto creciente / Gibosa creciente",
@@ -258,7 +258,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "Luna llena",
         definition:
-          "Luna 100% iluminada. Magnífica para observación selenográfica (cráteres, mares), pero el cielo se vuelve demasiado claro para objetos débiles.",
+          "Luna 100 % iluminada. Magnífica para observación selenográfica (cráteres, mares), pero el cielo se vuelve demasiado claro para objetos débiles.",
       },
       {
         term: "Gibosa menguante / Cuarto menguante / Menguante",
@@ -268,7 +268,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "Impacto lunar",
         definition:
-          "Cuánto interfiere la luz de la luna con tu observación. 'Alto' cerca de luna llena (mal para objetos débiles); 'bajo' cerca de luna nueva (cielo más oscuro). 'Moderado' en las fases intermedias.",
+          "Cuánto interfiere la luz de la Luna con tu observación. 'Alto' cerca de luna llena (mal para objetos débiles); 'bajo' cerca de luna nueva (cielo más oscuro). 'Moderado' en las fases intermedias.",
       },
     ],
   },
@@ -295,19 +295,19 @@ const HELP_CONTENT: HelpCategory[] = [
           "Velocidad a la que un objeto se aleja (positivo) o se acerca (negativo) de nosotros. Se mide en km/s. Relacionada con el redshift por la expansión del universo.",
       },
       {
-        term: "RA (Right Ascension / Ascensión Recta)",
+        term: "RA (Right Ascension / ascensión recta)",
         definition:
-          "Coordenada celeste análoga a la longitud terrestre. Mide la posición Este-Oeste del objeto en el cielo. Va de 0h a 24h (o 0° a 360°).",
+          "Coordenada celeste análoga a la longitud terrestre. Mide la posición este-oeste del objeto en el cielo. Va de 0 h a 24 h (o de 0° a 360°).",
       },
       {
-        term: "Dec (Declination / Declinación)",
+        term: "Dec (Declination / declinación)",
         definition:
-          "Coordenada celeste análoga a la latitud terrestre. Mide la posición Norte-Sur del objeto. Va de -90° (polo sur celeste) a +90° (polo norte celeste).",
+          "Coordenada celeste análoga a la latitud terrestre. Mide la posición norte-sur del objeto. Va de -90° (polo sur celeste) a +90° (polo norte celeste).",
       },
       {
         term: "J2000",
         definition:
-          "Sistema de referencia con época del 1 enero 2000. Las coordenadas se dan en este sistema porque los puntos de referencia rotan lentamente (precesión) y necesitamos una época fija para comparar entre catálogos.",
+          "Sistema de referencia con época del 1 de enero de 2000. Las coordenadas se dan en este sistema porque los puntos de referencia rotan lentamente (precesión) y necesitamos una época fija para comparar entre catálogos.",
       },
       {
         term: "Constelación",
@@ -374,9 +374,9 @@ const HELP_CONTENT: HelpCategory[] = [
           "Estrella cuyo brillo cambia con el tiempo, ya sea por causas internas (pulsaciones, manchas) o externas (eclipses por una compañera).",
       },
       {
-        term: "Constelación vs asterismo",
+        term: "Constelación frente a asterismo",
         definition:
-          "Una constelación es una región oficial del cielo (hay 88). Un asterismo es un grupo de estrellas reconocible que NO es una constelación oficial: ej. el Triángulo de Verano o el Cinturón de Orión.",
+          "Una constelación es una región oficial del cielo (hay 88). Un asterismo es un grupo de estrellas reconocible que NO es una constelación oficial: por ejemplo, el Triángulo de Verano o el Cinturón de Orión.",
       },
     ],
   },
@@ -395,7 +395,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "NGC (New General Catalogue)",
         definition:
-          "Catálogo de J.L.E. Dreyer (1888) con casi 8000 objetos no estelares. Mucho más extenso que Messier. Ejemplos: NGC 1300 (espiral barrada), NGC 4565 (galaxia de la Aguja).",
+          "Catálogo de J. L. E. Dreyer (1888) con casi 8000 objetos no estelares. Mucho más extenso que Messier. Ejemplos: NGC 1300 (espiral barrada), NGC 4565 (galaxia de la Aguja).",
       },
       {
         term: "IC (Index Catalogue)",
@@ -440,7 +440,7 @@ const HELP_CONTENT: HelpCategory[] = [
       {
         term: "JPL Horizons",
         definition:
-          "Servicio del Jet Propulsion Lab (NASA) que provee efemérides ultra-precisas de cuerpos del Sistema Solar (planetas, lunas, cometas, asteroides). astronomIA lo consulta para planificar observaciones de planetas.",
+          "Servicio del Jet Propulsion Lab (NASA) que provee efemérides ultraprecisas de cuerpos del sistema solar (planetas, lunas, cometas, asteroides). astronomIA lo consulta para planificar observaciones de planetas.",
       },
     ],
   },
@@ -570,7 +570,7 @@ export function HelpButton() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar un término (ej: Sérsic, isofotas, airmass, fase lunar...)"
+                placeholder="Buscar un término (p. ej., Sérsic, isofotas, airmass, fase lunar...)"
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 autoFocus
               />
@@ -623,7 +623,7 @@ export function HelpButton() {
               {/* Créditos del TFM — siempre visibles al final del contenido. */}
               <div className="mt-6 pt-5 border-t border-border text-center text-xs text-muted-foreground leading-relaxed space-y-2">
                 <p>
-                  Esta solución hace parte del{" "}
+                  Esta solución forma parte del{" "}
                   <span className="text-foreground font-medium">
                     Trabajo de Fin de Máster
                   </span>{" "}
@@ -632,12 +632,12 @@ export function HelpButton() {
                     Máster Universitario en Astrofísica y Técnicas de
                     Observación Astronómica
                   </span>
-                  , presentado en la{" "}
+                  {", presentado en la "}
                   <span className="text-foreground font-medium">
                     Universidad Internacional de La Rioja (UNIR)
                   </span>{" "}
                   en{" "}
-                  <span className="text-foreground font-medium">2026</span>.
+                  <span className="text-foreground font-medium">2026</span>{"."}
                 </p>
                 <p>
                   Autores:{" "}
@@ -647,13 +647,12 @@ export function HelpButton() {
                   y{" "}
                   <span className="text-foreground font-medium">
                     María Ilse Dovale
-                  </span>
-                  .
+                  </span>{"."}
                 </p>
                 <p>
                   Directora:{" "}
                   <span className="text-foreground font-medium">
-                    PhD. Francesca Pinna
+                    Dra. Francesca Pinna
                   </span>
                 </p>
               </div>
@@ -665,7 +664,7 @@ export function HelpButton() {
               <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground text-[10px] font-mono">
                 Esc
               </kbd>{" "}
-              o click fuera para cerrar
+              o haz clic fuera para cerrar
             </div>
           </div>
         </div>
