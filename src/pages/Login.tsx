@@ -11,7 +11,7 @@ export default function Login() {
     e.preventDefault();
     const trimmed = email.trim();
     if (!trimmed) {
-      setError("Introduce tu email");
+      setError("Introduce tu correo electrónico.");
       return;
     }
     setError("");
@@ -38,7 +38,7 @@ export default function Login() {
           className="w-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-md p-6 shadow-lg text-left"
         >
           <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-            Email
+            Correo electrónico
           </label>
           <input
             id="email"
@@ -66,17 +66,17 @@ export default function Login() {
         <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 text-left">
           <div className="text-2xl mb-2">🔭</div>
           <h3 className="text-sm font-semibold text-foreground mb-1">Visualización interactiva</h3>
-          <p className="text-xs text-muted-foreground">Explora el cielo en múltiples longitudes de onda con el visor Aladin integrado</p>
+          <p className="text-xs text-muted-foreground">Explora el cielo en múltiples longitudes de onda con el visor Aladin integrado.</p>
         </div>
         <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 text-left">
           <div className="text-2xl mb-2">🌀</div>
           <h3 className="text-sm font-semibold text-foreground mb-1">Análisis de galaxias</h3>
-          <p className="text-xs text-muted-foreground">Segmentación, fotometría, morfología, perfiles de brillo e isofotometría</p>
+          <p className="text-xs text-muted-foreground">Segmentación, fotometría, morfología, perfiles de brillo e isofotometría.</p>
         </div>
         <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 text-left">
           <div className="text-2xl mb-2">🌙</div>
           <h3 className="text-sm font-semibold text-foreground mb-1">Planificación de observación</h3>
-          <p className="text-xs text-muted-foreground">Planifica noches de observación según tu ubicación, equipamiento y condiciones</p>
+          <p className="text-xs text-muted-foreground">Planifica noches de observación según tu ubicación, equipamiento y condiciones.</p>
         </div>
       </div>
 

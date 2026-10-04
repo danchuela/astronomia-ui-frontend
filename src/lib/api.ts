@@ -43,7 +43,7 @@ export interface FeedbackPayload {
 export async function sendFeedback(payload: FeedbackPayload): Promise<void> {
   const base = API_BASE.replace(/\/$/, "");
   if (!base) {
-    throw new Error("VITE_API_URL no configurado.");
+    throw new Error("La conexión con el servicio no está configurada.");
   }
 
   // Limpiamos campos opcionales vacios para no mandar "" innecesariamente.
@@ -67,7 +67,7 @@ export async function sendFeedback(payload: FeedbackPayload): Promise<void> {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Error ${res.status} al enviar feedback: ${text.slice(0, 200)}`);
+    throw new Error(`Error ${res.status} al enviar comentarios: ${text.slice(0, 200)}`);
   }
 }
 
@@ -87,7 +87,7 @@ export async function sendMessageStream(
 ): Promise<void> {
   const base = API_BASE.replace(/\/$/, "");
   if (!base) {
-    onEvent({ type: "error", message: "VITE_API_URL no configurado." });
+    onEvent({ type: "error", message: "La conexión con el servicio no está configurada." });
     return;
   }
 
@@ -119,7 +119,7 @@ export async function sendMessageStream(
 
   const reader = res.body?.getReader();
   if (!reader) {
-    onEvent({ type: "error", message: "No se pudo leer el stream." });
+    onEvent({ type: "error", message: "No se pudo leer la respuesta." });
     return;
   }
 

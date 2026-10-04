@@ -205,7 +205,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         <p>Visor interactivo no disponible: {error}</p>
         {isWebGL && (
           <p>
-            Activa hardware acceleration en tu navegador (Chrome: chrome://settings/system) y recarga.
+            Activa la aceleración por hardware en tu navegador (Chrome: chrome://settings/system) y recarga la página.
           </p>
         )}
         <a
@@ -214,7 +214,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
           rel="noopener noreferrer"
           className="inline-block mt-1 text-primary underline"
         >
-          Abrir en Aladin Lite web
+          Abrir Aladin Lite en la web
         </a>
       </div>
     );

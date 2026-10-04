@@ -170,7 +170,7 @@ export default function Chat() {
       }, viewerSnapshot);
     } catch (err) {
       updateMessage(convId, assistantId, {
-        content: err instanceof Error ? err.message : "No se pudo obtener respuesta.",
+        content: err instanceof Error ? err.message : "No se pudo obtener una respuesta.",
       });
       refreshConversations();
     } finally {
@@ -271,17 +271,17 @@ export default function Chat() {
                   <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
                     <div className="text-2xl mb-2">🔭</div>
                     <h3 className="text-sm font-semibold text-foreground mb-1">Visualización</h3>
-                    <p className="text-xs text-muted-foreground">Explora el cielo con el visor interactivo en múltiples longitudes de onda</p>
+                    <p className="text-xs text-muted-foreground">Explora el cielo con el visor interactivo en múltiples longitudes de onda.</p>
                   </div>
                   <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
                     <div className="text-2xl mb-2">🌀</div>
                     <h3 className="text-sm font-semibold text-foreground mb-1">Análisis</h3>
-                    <p className="text-xs text-muted-foreground">Segmentación, fotometría, morfología y perfiles de brillo de galaxias</p>
+                    <p className="text-xs text-muted-foreground">Segmentación, fotometría, morfología y perfiles de brillo de galaxias.</p>
                   </div>
                   <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
                     <div className="text-2xl mb-2">🌙</div>
                     <h3 className="text-sm font-semibold text-foreground mb-1">Observación</h3>
-                    <p className="text-xs text-muted-foreground">Planifica tus noches de observación según tu ubicación y condiciones</p>
+                    <p className="text-xs text-muted-foreground">Planifica tus noches de observación según tu ubicación y condiciones.</p>
                   </div>
                 </div>
 
