@@ -72,7 +72,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
       return;
     }
     if (wantsContact && !email.trim()) {
-      setErrorMsg("Si quieres ser contactado/a, dame un email valido.");
+      setErrorMsg("Si quieres que te contactemos, introduce un correo electrónico válido.");
       return;
     }
     setStatus("submitting");
@@ -100,8 +100,8 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Enviar feedback"
-        title="Cuentanos que opinas"
+        aria-label="Enviar comentarios"
+        title="Cuéntanos qué opinas"
         className="fixed bottom-20 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/80 text-foreground shadow-lg backdrop-blur transition-all hover:bg-primary hover:text-primary-foreground hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
       >
         {/* Icono de bocadillo de comentario. */}
@@ -125,7 +125,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
           onClick={handleClose}
           role="dialog"
           aria-modal="true"
-          aria-label="Enviar feedback"
+          aria-label="Enviar comentarios"
         >
           <div
             className="relative w-full max-w-md flex flex-col rounded-2xl border border-border bg-card text-foreground shadow-2xl"
@@ -135,10 +135,10 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
             <div className="flex items-start justify-between border-b border-border p-5">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">
-                  Cuentanos que opinas
+                  Cuéntanos qué opinas
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Tu feedback ayuda a mejorar astronomIA.
+                  Tu opinión ayuda a mejorar astronomIA.
                 </p>
               </div>
               <button
@@ -168,10 +168,10 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
               <div className="p-8 text-center space-y-3">
                 <div className="text-5xl">🙏</div>
                 <p className="text-sm text-foreground font-medium">
-                  ¡Gracias por tu feedback!
+                  ¡Gracias por tus comentarios!
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Lo hemos registrado correctamente.
+                  Los hemos registrado correctamente.
                 </p>
               </div>
             ) : (
@@ -179,7 +179,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                 {/* Rating */}
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    ¿Como ha ido tu experiencia?
+                    ¿Cómo ha ido tu experiencia?
                   </label>
                   <div className="flex gap-3">
                     <button
@@ -225,7 +225,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     rows={4}
-                    placeholder="Que te ha gustado, que mejorarias, que falta..."
+                    placeholder="Qué te ha gustado, qué mejorarías, qué falta..."
                     className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                   />
                 </div>
@@ -240,7 +240,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                       className="mt-0.5 h-4 w-4 rounded border-border bg-background text-primary focus:ring-primary"
                     />
                     <span className="text-sm text-foreground">
-                      Quiero que me contacten para hablar mas a fondo
+                      Quiero que me contacten para hablar más a fondo
                     </span>
                   </label>
                   {wantsContact && (
@@ -267,7 +267,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                   disabled={status === "submitting" || rating === null}
                   className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  {status === "submitting" ? "Enviando..." : "Enviar feedback"}
+                  {status === "submitting" ? "Enviando..." : "Enviar comentarios"}
                 </button>
               </form>
             )}
@@ -278,7 +278,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
               <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground text-[10px] font-mono">
                 Esc
               </kbd>{" "}
-              o click fuera para cerrar
+              o haz clic fuera para cerrar
             </div>
           </div>
         </div>

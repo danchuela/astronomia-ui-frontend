@@ -105,18 +105,18 @@ function MiniRating({ requestId }: { requestId: string }) {
   if (submitted) {
     return (
       <div className="mt-2 text-xs text-muted-foreground italic">
-        Gracias por tu feedback {submitted === "up" ? "👍" : "👎"}
+        Gracias por tu valoración {submitted === "up" ? "👍" : "👎"}
       </div>
     );
   }
 
   return (
     <div className="mt-2 flex items-center gap-2">
-      <span className="text-xs text-muted-foreground">¿Te ha sido util?</span>
+      <span className="text-xs text-muted-foreground">¿Te ha sido útil?</span>
       <button
         type="button"
         onClick={() => rate("up")}
-        aria-label="Marcar como util"
+        aria-label="Marcar como útil"
         className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs hover:bg-muted/60 hover:border-primary/60 transition-colors"
       >
         👍
@@ -124,14 +124,14 @@ function MiniRating({ requestId }: { requestId: string }) {
       <button
         type="button"
         onClick={() => rate("down")}
-        aria-label="Marcar como no util"
+        aria-label="Marcar como no útil"
         className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs hover:bg-muted/60 hover:border-primary/60 transition-colors"
       >
         👎
       </button>
       {error && (
         <span className="text-[11px] text-red-400">
-          No se pudo enviar, intentalo mas tarde.
+          No se pudo enviar. Inténtalo más tarde.
         </span>
       )}
     </div>
@@ -197,7 +197,7 @@ function HstJwstBadge({ info }: { info: HstJwstInfo }) {
           rel="noopener noreferrer"
           className="text-xs text-primary underline"
         >
-          Ver preview
+          Ver vista previa
         </a>
       )}
     </div>
