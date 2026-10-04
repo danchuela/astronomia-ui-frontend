@@ -37,6 +37,9 @@ export default function Login() {
           onSubmit={handleSubmit}
           className="w-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-md p-6 shadow-lg text-left"
         >
+          <h1 className="text-base font-semibold text-foreground mb-4">
+            Acceso de demostración
+          </h1>
           <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
             Correo electrónico
           </label>
@@ -48,10 +51,14 @@ export default function Login() {
               setEmailInput(e.target.value);
               setError("");
             }}
-            placeholder="tu@email.com"
+            placeholder="demo@example.com"
+            aria-describedby="demo-login-note"
             className="w-full h-12 px-4 rounded-lg bg-background/50 border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             autoComplete="email"
           />
+          <p id="demo-login-note" className="mt-2 text-xs text-muted-foreground leading-relaxed">
+            No hace falta usar un correo real. Puedes introducir uno ficticio, como demo@example.com.
+          </p>
           {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
           <button
             type="submit"
