@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { OPEN_HELP_EVENT } from "@/lib/help";
 
 // ─────────────────────────────────────────────────────────────────────
 //  HelpButton — Botón flotante + modal con glosario completo de astronomIA.
@@ -59,6 +60,40 @@ const HELP_CONTENT: HelpCategory[] = [
         definition:
           'Si pides "Analiza la morfología completa de X", obtienes el paquete entero: estructura, isofotas, parámetros CAS, perfil de brillo, ajuste de Sérsic y descripción narrativa. Es el análisis más exhaustivo que ofrece la app.',
         example: 'Ejemplo: "Analiza la morfología completa de M51".',
+      },
+    ],
+  },
+  {
+    id: "privacidad",
+    title: "Privacidad, datos e inteligencia artificial",
+    emoji: "🔒",
+    description:
+      "Qué hace la inteligencia artificial en astronomIA, qué datos se guardan y para qué.",
+    entries: [
+      {
+        term: "Modelos de lenguaje (IA): puede cometer errores",
+        definition:
+          "astronomIA usa modelos de lenguaje de OpenAI para entender tu pregunta y redactar la respuesta. Los cálculos (posiciones, horarios, fase lunar, clima) los hace el sistema con fuentes astronómicas y meteorológicas, pero el texto puede contener errores u omisiones. Comprueba los datos importantes antes de planificar una salida.",
+      },
+      {
+        term: "Qué datos guardamos",
+        definition:
+          "El texto de tus consultas y lo que el sistema entendió (objeto, lugar y fecha), si la respuesta funcionó y cuánto tardó, el tipo de navegador, y las valoraciones o comentarios que envíes. El correo con el que entras y tu historial de chats no se guardan en el servidor: se quedan en tu navegador.",
+      },
+      {
+        term: "Para qué los usamos",
+        definition:
+          "Para mejorar astronomIA y analizar su uso de forma agregada, en el marco del Trabajo de Fin de Máster. No se usan con fines comerciales.",
+      },
+      {
+        term: "Servicios externos",
+        definition:
+          "Para responder, el texto de tu consulta se envía a OpenAI. Los nombres de objetos, lugares y coordenadas se consultan en servicios científicos y meteorológicos: SIMBAD (CDS), JPL Horizons, SDSS, SkyView, MAST y Open-Meteo. No escribas datos personales en tus consultas.",
+      },
+      {
+        term: "Correo de contacto (opcional)",
+        definition:
+          "Solo si en el formulario de comentarios marcas que quieres que te contactemos, guardamos el correo que escribas, y únicamente para responderte.",
       },
     ],
   },
@@ -458,6 +493,16 @@ export function HelpButton() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
+  // Open on request from other components (see openHelp).
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      setQuery((e as CustomEvent<string>).detail ?? "");
+      setOpen(true);
+    };
+    window.addEventListener(OPEN_HELP_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_HELP_EVENT, onOpen);
+  }, []);
+
   // Cerrar con tecla ESC.
   useEffect(() => {
     if (!open) return;
@@ -484,7 +529,11 @@ export function HelpButton() {
     const q = normalize(query);
     return HELP_CONTENT.map((cat) => ({
       ...cat,
-      entries: cat.entries.filter(
+      // A match on the section title or description shows the whole section.
+      entries:
+        normalize(cat.title).includes(q) || normalize(cat.description ?? "").includes(q)
+          ? cat.entries
+          : cat.entries.filter(
         (e) =>
           normalize(e.term).includes(q) ||
           normalize(e.definition).includes(q) ||
