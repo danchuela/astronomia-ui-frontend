@@ -34,6 +34,12 @@ export interface ViewSnapshot {
   image_data?: string; // base64 JPEG canvas capture; undefined when CORS prevents it
 }
 
+// Quick-reply button sent by the BFF (e.g. analyses after "Muéstrame M51").
+export interface SuggestedAction {
+  label: string;
+  message: string;
+}
+
 export interface Message {
   id: string;
   role: MessageRole;
@@ -45,6 +51,7 @@ export interface Message {
   hstJwst?: HstJwstInfo;
   objectName?: string;
   observationHtml?: string;
+  suggestedActions?: SuggestedAction[];
   // request_id que asigna el BFF a esta interaccion. Lo usamos para vincular
   // el feedback del usuario con la consulta concreta a la que se refiere.
   requestId?: string;

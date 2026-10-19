@@ -206,9 +206,13 @@ function HstJwstBadge({ info }: { info: HstJwstInfo }) {
 
 interface ChatMessageProps {
   message: Message;
+  // Sends a suggested action as a new user message. Only passed for the latest
+  // message, so older buttons are not shown.
+  onAction?: (text: string) => void;
+  actionsDisabled?: boolean;
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageProps) {
   const isUser = message.role === "user";
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const bubbleWidth = !isUser && message.observationHtml
@@ -237,6 +241,22 @@ export function ChatMessage({ message }: ChatMessageProps) {
         <div className="whitespace-pre-wrap break-words text-sm leading-relaxed">
           {message.content}
         </div>
+        {!isUser && onAction && message.suggestedActions && message.suggestedActions.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Análisis disponibles">
+            {message.suggestedActions.map((action) => (
+              <button
+                key={action.label}
+                type="button"
+                disabled={actionsDisabled}
+                onClick={() => onAction(action.message)}
+                title={action.message}
+                className="px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-xs font-medium text-foreground hover:bg-primary/25 hover:border-primary/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
+        )}
         {message.objectInfo && <ObjectInfoBar info={message.objectInfo} />}
         {message.hstJwst && <HstJwstBadge info={message.hstJwst} />}
         {message.imageUrl && (
