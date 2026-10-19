@@ -160,6 +160,7 @@ export default function Chat() {
           if (event.object_info) updateMessage(convId, assistantId, { objectInfo: event.object_info as ObjectInfo });
           if (event.hst_jwst) updateMessage(convId, assistantId, { hstJwst: event.hst_jwst as unknown as HstJwstInfo });
           if (event.object_name) updateMessage(convId, assistantId, { objectName: event.object_name });
+          if (event.suggested_actions) updateMessage(convId, assistantId, { suggestedActions: event.suggested_actions });
           // Guardamos el request_id en el mensaje del asistente para que el
           // mini-rating pueda enviar feedback vinculado a esta interaccion.
           if (event.request_id) updateMessage(convId, assistantId, { requestId: event.request_id });
@@ -304,8 +305,13 @@ export default function Chat() {
                 </div>
               </div>
             ) : (
-              messages.map((msg) => (
-                <ChatMessage key={msg.id} message={msg} />
+              messages.map((msg, i) => (
+                <ChatMessage
+                  key={msg.id}
+                  message={msg}
+                  onAction={i === messages.length - 1 ? handleSend : undefined}
+                  actionsDisabled={loading}
+                />
               ))
             )}
             <div ref={messagesEndRef} />

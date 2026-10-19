@@ -88,7 +88,7 @@ export type StreamEvent =
   | { type: "status"; message: string }
   | { type: "summary"; summary: string }
   | { type: "artifacts"; request_id: string; image_url?: string; coordinates?: CoordinatesPayload; object_info?: Record<string, unknown>; hst_jwst?: Record<string, unknown>; html_chart?: string; analysis_plots?: string[] }
-  | { type: "end"; request_id: string; status: string; summary?: string; coordinates?: CoordinatesPayload; object_info?: Record<string, unknown>; hst_jwst?: Record<string, unknown>; object_name?: string }
+  | { type: "end"; request_id: string; status: string; summary?: string; coordinates?: CoordinatesPayload; object_info?: Record<string, unknown>; hst_jwst?: Record<string, unknown>; object_name?: string; suggested_actions?: { label: string; message: string }[] }
   | { type: "error"; message: string };
 
 export async function sendMessageStream(

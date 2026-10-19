@@ -61,6 +61,12 @@ const HELP_CONTENT: HelpCategory[] = [
           "astronomIA depende de servicios externos (catálogos astronómicos, imágenes de surveys, efemérides, meteorología y modelos de lenguaje). Si alguno falla, verás un aviso de que esa parte está teniendo problemas y una sugerencia de otra función que sí puedes usar mientras tanto. El equipo recibe un aviso automático con el diagnóstico para arreglarlo. Si el problema sigue, vuelve a intentarlo en unos minutos.",
       },
       {
+        term: "Botones de análisis",
+        definition:
+          'Cuando pides ver un objeto (por ejemplo "Muéstrame M51"), astronomIA lo abre en el visor y te ofrece botones con los análisis disponibles: morfología completa, segmentación e isofotas, fotometría básica y perfil de brillo. Ajusta antes el encuadre, el zoom y la banda en el visor, y haz clic en el análisis que quieras. También puedes seguir escribiendo para pedir algo más específico.',
+        example: 'Ejemplo: "Muéstrame M51" → botón "Perfil de brillo".',
+      },
+      {
         term: "Frase mágica: morfología completa",
         definition:
           'Si pides "Analiza la morfología completa de X", obtienes el paquete entero: estructura, isofotas, parámetros CAS, perfil de brillo, ajuste de Sérsic y descripción narrativa. Es el análisis más exhaustivo que ofrece la app.',
@@ -250,6 +256,11 @@ const HELP_CONTENT: HelpCategory[] = [
         term: "Sale / Se pone",
         definition:
           "Hora a la que el objeto cruza el horizonte subiendo (sale) o bajando (se pone). En cielo profundo, la app suele indicar 'sale sobre 10°' porque por debajo no se observa.",
+      },
+      {
+        term: "Meteorología de la noche",
+        definition:
+          "Nubosidad, viento, humedad y temperatura se calculan para las horas en que tu objeto es observable esa noche. Si no hay una ventana clara, se usa toda la noche, de la puesta a la salida del sol, en hora local del lugar (en latitudes altas en verano puede ser muy corta). Hasta unos 15 días se usa un pronóstico; para fechas más lejanas, los datos de las mismas fechas del año anterior como referencia.",
       },
       {
         term: "Seeing",
