@@ -56,6 +56,11 @@ const HELP_CONTENT: HelpCategory[] = [
           'Ejemplos: "¿Qué es UGC 10214?", "Cuéntame sobre la galaxia del Sombrero", "¿Cuál es la distancia de M87?".',
       },
       {
+        term: "Si un servicio no responde",
+        definition:
+          "astronomIA depende de servicios externos (catálogos astronómicos, imágenes de surveys, efemérides, meteorología y modelos de lenguaje). Si alguno falla, verás un aviso de que esa parte está teniendo problemas y una sugerencia de otra función que sí puedes usar mientras tanto. El equipo recibe un aviso automático con el diagnóstico para arreglarlo. Si el problema sigue, vuelve a intentarlo en unos minutos.",
+      },
+      {
         term: "Frase mágica: morfología completa",
         definition:
           'Si pides "Analiza la morfología completa de X", obtienes el paquete entero: estructura, isofotas, parámetros CAS, perfil de brillo, ajuste de Sérsic y descripción narrativa. Es el análisis más exhaustivo que ofrece la app.',

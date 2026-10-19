@@ -1,5 +1,12 @@
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
+// Shown when the BFF itself cannot be reached or answers with an error. The
+// technical detail only goes to the browser console, never to the chat.
+export const SERVICE_UNAVAILABLE_MESSAGE =
+  "astronomIA no está disponible en este momento. Revisa tu conexión a internet e inténtalo de nuevo en unos minutos.";
+const FEEDBACK_UNAVAILABLE_MESSAGE =
+  "No pudimos enviar tus comentarios en este momento. Inténtalo de nuevo en unos minutos.";
+
 export interface AnalyzePayload {
   request_id: string;
   message: string;
@@ -59,15 +66,21 @@ export async function sendFeedback(payload: FeedbackPayload): Promise<void> {
     body.user_email = payload.user_email.trim();
   }
 
-  const res = await fetch(`${base}/feedback`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${base}/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    console.warn("feedback request failed", err);
+    throw new Error(FEEDBACK_UNAVAILABLE_MESSAGE);
+  }
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Error ${res.status} al enviar comentarios: ${text.slice(0, 200)}`);
+    console.warn(`feedback failed: HTTP ${res.status}`, (await res.text()).slice(0, 200));
+    throw new Error(FEEDBACK_UNAVAILABLE_MESSAGE);
   }
 }
 
@@ -105,21 +118,28 @@ export async function sendMessageStream(
     }),
   };
 
-  const res = await fetch(`${base}/analyze/stream`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${base}/analyze/stream`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (err) {
+    console.warn("analyze request failed", err);
+    onEvent({ type: "error", message: SERVICE_UNAVAILABLE_MESSAGE });
+    return;
+  }
 
   if (!res.ok) {
-    const text = await res.text();
-    onEvent({ type: "error", message: `Error ${res.status}: ${text.slice(0, 200)}` });
+    console.warn(`analyze failed: HTTP ${res.status}`, (await res.text()).slice(0, 200));
+    onEvent({ type: "error", message: SERVICE_UNAVAILABLE_MESSAGE });
     return;
   }
 
   const reader = res.body?.getReader();
   if (!reader) {
-    onEvent({ type: "error", message: "No se pudo leer la respuesta." });
+    onEvent({ type: "error", message: SERVICE_UNAVAILABLE_MESSAGE });
     return;
   }
 
