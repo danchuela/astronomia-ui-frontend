@@ -11,7 +11,7 @@ import {
   appendMessage,
   updateMessage,
 } from "@/lib/conversations";
-import { sendMessageStream } from "@/lib/api";
+import { SERVICE_UNAVAILABLE_MESSAGE, sendMessageStream } from "@/lib/api";
 import type { AladinCoordinates, Conversation, HstJwstInfo, Message, ObjectInfo, ViewSnapshot } from "@/types/chat";
 
 const AladinViewer = lazy(() =>
@@ -169,9 +169,9 @@ export default function Chat() {
         refreshConversations();
       }, viewerSnapshot);
     } catch (err) {
-      updateMessage(convId, assistantId, {
-        content: err instanceof Error ? err.message : "No se pudo obtener una respuesta.",
-      });
+      // e.g. the connection drops in the middle of the answer
+      console.warn("chat stream failed", err);
+      updateMessage(convId, assistantId, { content: SERVICE_UNAVAILABLE_MESSAGE });
       refreshConversations();
     } finally {
       setLoading(false);
