@@ -25,7 +25,8 @@ export function getConversation(id: string): Conversation | undefined {
   return load().find((c) => c.id === id);
 }
 
-export function createConversation(title: string = "Nueva conversación"): Conversation {
+// An empty title is shown as "New conversation" in the interface language (Sidebar).
+export function createConversation(title: string = ""): Conversation {
   const conv: Conversation = {
     id: crypto.randomUUID(),
     title,
@@ -56,7 +57,7 @@ export function appendMessage(conversationId: string, message: Message): void {
   conv.messages.push(message);
   conv.updatedAt = Date.now();
   if (conv.messages.length === 1 && message.role === "user") {
-    conv.title = message.content.slice(0, 50) || "Nueva conversación";
+    conv.title = message.content.slice(0, 50);
   }
   save(list);
 }

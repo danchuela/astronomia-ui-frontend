@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { sendFeedback } from "@/lib/api";
+import { useLang } from "@/lib/i18n";
 
 // ─────────────────────────────────────────────────────────────────────
 //  FeedbackButton — Boton flotante + modal con formulario completo de
@@ -21,6 +22,7 @@ interface FeedbackButtonProps {
 type Status = "idle" | "submitting" | "success" | "error";
 
 export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
+  const { t } = useLang();
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState<"up" | "down" | null>(null);
   const [comment, setComment] = useState("");
@@ -68,11 +70,11 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (rating === null) {
-      setErrorMsg("Selecciona pulgar arriba o abajo.");
+      setErrorMsg(t.chooseRating);
       return;
     }
     if (wantsContact && !email.trim()) {
-      setErrorMsg("Si quieres que te contactemos, introduce un correo electrónico válido.");
+      setErrorMsg(t.contactEmailRequired);
       return;
     }
     setStatus("submitting");
@@ -90,7 +92,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
       setTimeout(() => handleClose(), 2000);
     } catch (err) {
       setStatus("error");
-      setErrorMsg(err instanceof Error ? err.message : "Error desconocido.");
+      setErrorMsg(err instanceof Error ? err.message : t.unknownError);
     }
   }
 
@@ -100,8 +102,8 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Enviar comentarios"
-        title="Cuéntanos qué opinas"
+        aria-label={t.feedbackOpen}
+        title={t.feedbackTitle}
         className="fixed bottom-20 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card/80 text-foreground shadow-lg backdrop-blur transition-all hover:bg-primary hover:text-primary-foreground hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary"
       >
         {/* Icono de bocadillo de comentario. */}
@@ -125,7 +127,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
           onClick={handleClose}
           role="dialog"
           aria-modal="true"
-          aria-label="Enviar comentarios"
+          aria-label={t.feedbackOpen}
         >
           <div
             className="relative w-full max-w-md flex flex-col rounded-2xl border border-border bg-card text-foreground shadow-2xl"
@@ -135,16 +137,16 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
             <div className="flex items-start justify-between border-b border-border p-5">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">
-                  Cuéntanos qué opinas
+                  {t.feedbackTitle}
                 </h2>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Tu opinión ayuda a mejorar astronomIA.
+                  {t.feedbackSubtitle}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleClose}
-                aria-label="Cerrar"
+                aria-label={t.close}
                 className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 <svg
@@ -168,10 +170,10 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
               <div className="p-8 text-center space-y-3">
                 <div className="text-5xl">🙏</div>
                 <p className="text-sm text-foreground font-medium">
-                  ¡Gracias por tus comentarios!
+                  {t.feedbackThanks}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Los hemos registrado correctamente.
+                  {t.feedbackSaved}
                 </p>
               </div>
             ) : (
@@ -179,7 +181,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                 {/* Rating */}
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    ¿Cómo ha ido tu experiencia?
+                    {t.feedbackHow}
                   </label>
                   <div className="flex gap-3">
                     <button
@@ -215,9 +217,9 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                     htmlFor="feedback-comment"
                     className="block text-sm font-medium text-foreground mb-2"
                   >
-                    Comentario{" "}
+                    {t.comment}{" "}
                     <span className="text-xs text-muted-foreground font-normal">
-                      (opcional)
+                      {t.optional}
                     </span>
                   </label>
                   <textarea
@@ -225,7 +227,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     rows={4}
-                    placeholder="Qué te ha gustado, qué mejorarías, qué falta..."
+                    placeholder={t.commentPlaceholder}
                     className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                   />
                 </div>
@@ -240,7 +242,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                       className="mt-0.5 h-4 w-4 rounded border-border bg-background text-primary focus:ring-primary"
                     />
                     <span className="text-sm text-foreground">
-                      Quiero que me contacten para hablar más a fondo
+                      {t.wantsContact}
                     </span>
                   </label>
                   {wantsContact && (
@@ -248,7 +250,7 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="tu@email.com"
+                      placeholder={t.emailPlaceholder}
                       className="mt-2 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   )}
@@ -267,18 +269,18 @@ export function FeedbackButton({ latestRequestId }: FeedbackButtonProps) {
                   disabled={status === "submitting" || rating === null}
                   className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  {status === "submitting" ? "Enviando..." : "Enviar comentarios"}
+                  {status === "submitting" ? t.sending : t.feedbackOpen}
                 </button>
               </form>
             )}
 
             {/* Footer */}
             <div className="border-t border-border p-3 text-center text-[11px] text-muted-foreground">
-              Pulsa{" "}
+              {t.pressEsc}{" "}
               <kbd className="px-1.5 py-0.5 rounded bg-muted text-foreground text-[10px] font-mono">
                 Esc
               </kbd>{" "}
-              o haz clic fuera para cerrar
+              {t.orClickOutside}
             </div>
           </div>
         </div>

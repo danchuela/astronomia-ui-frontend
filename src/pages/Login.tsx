@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setEmail } from "@/lib/auth";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { useLang } from "@/lib/i18n";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { t } = useLang();
   const [email, setEmailInput] = useState("");
   const [error, setError] = useState("");
 
@@ -11,7 +14,7 @@ export default function Login() {
     e.preventDefault();
     const trimmed = email.trim();
     if (!trimmed) {
-      setError("Introduce tu correo electrónico.");
+      setError(t.emailRequired);
       return;
     }
     setError("");
@@ -20,7 +23,10 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 gap-8 overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-4 gap-8 overflow-hidden">
+      <div className="absolute top-4 right-4">
+        <LanguageToggle />
+      </div>
       <img
         src="/logo.png"
         alt=""
@@ -30,7 +36,7 @@ export default function Login() {
       <img src="/logo-text.png" alt="astronomIA" className="h-16 mx-auto mb-4" />
       <div className="w-full max-w-sm text-center">
         <p className="text-muted-foreground text-base max-w-sm mx-auto mb-8">
-          Tu asistente astronómico con inteligencia artificial. Explora el universo, analiza galaxias y planifica observaciones.
+          {t.tagline}
         </p>
 
         <form
@@ -38,10 +44,10 @@ export default function Login() {
           className="w-full rounded-2xl border border-border/50 bg-card/50 backdrop-blur-md p-6 shadow-lg text-left"
         >
           <h1 className="text-base font-semibold text-foreground mb-4">
-            Acceso de demostración
+            {t.demoAccess}
           </h1>
           <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-            Correo electrónico
+            {t.email}
           </label>
           <input
             id="email"
@@ -57,34 +63,26 @@ export default function Login() {
             autoComplete="email"
           />
           <p id="demo-login-note" className="mt-2 text-xs text-muted-foreground leading-relaxed">
-            No hace falta usar un correo real. Puedes introducir uno ficticio, como demo@example.com.
+            {t.demoNote}
           </p>
           {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
           <button
             type="submit"
             className="mt-5 w-full h-12 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
           >
-            Entrar
+            {t.enter}
           </button>
         </form>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl">
-        <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 text-left">
-          <div className="text-2xl mb-2">🔭</div>
-          <h3 className="text-sm font-semibold text-foreground mb-1">Visualización interactiva</h3>
-          <p className="text-xs text-muted-foreground">Explora el cielo en múltiples longitudes de onda con el visor Aladin integrado.</p>
-        </div>
-        <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 text-left">
-          <div className="text-2xl mb-2">🌀</div>
-          <h3 className="text-sm font-semibold text-foreground mb-1">Análisis de galaxias</h3>
-          <p className="text-xs text-muted-foreground">Segmentación, fotometría, morfología, perfiles de brillo e isofotometría.</p>
-        </div>
-        <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 text-left">
-          <div className="text-2xl mb-2">🌙</div>
-          <h3 className="text-sm font-semibold text-foreground mb-1">Planificación de observación</h3>
-          <p className="text-xs text-muted-foreground">Planifica noches de observación según tu ubicación, equipamiento y condiciones.</p>
-        </div>
+        {t.loginCards.map(([emoji, title, text]) => (
+          <div key={title} className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-sm p-5 text-left">
+            <div className="text-2xl mb-2">{emoji}</div>
+            <h3 className="text-sm font-semibold text-foreground mb-1">{title}</h3>
+            <p className="text-xs text-muted-foreground">{text}</p>
+          </div>
+        ))}
       </div>
 
     </div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { HstJwstInfo, Message, ObjectInfo } from "@/types/chat";
 import { sendFeedback } from "@/lib/api";
+import { useLang } from "@/lib/i18n";
 
 const OBSERVATION_FRAME_MIN_HEIGHT = 420;
 const OBSERVATION_FRAME_HEIGHT_EVENT = "astronomia-observation-frame-height";
@@ -89,6 +90,7 @@ function ObservationHtmlFrame({ html }: { html: string }) {
 // rapido al BFF en cuanto el usuario hace click. Aparece solo en mensajes
 // del bot que ya tienen requestId asignado.
 function MiniRating({ requestId }: { requestId: string }) {
+  const { t } = useLang();
   const [submitted, setSubmitted] = useState<"up" | "down" | null>(null);
   const [error, setError] = useState(false);
 
@@ -105,18 +107,18 @@ function MiniRating({ requestId }: { requestId: string }) {
   if (submitted) {
     return (
       <div className="mt-2 text-xs text-muted-foreground italic">
-        Gracias por tu valoración {submitted === "up" ? "👍" : "👎"}
+        {t.thanksRating} {submitted === "up" ? "👍" : "👎"}
       </div>
     );
   }
 
   return (
     <div className="mt-2 flex items-center gap-2">
-      <span className="text-xs text-muted-foreground">¿Te ha sido útil?</span>
+      <span className="text-xs text-muted-foreground">{t.wasUseful}</span>
       <button
         type="button"
         onClick={() => rate("up")}
-        aria-label="Marcar como útil"
+        aria-label={t.markUseful}
         className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs hover:bg-muted/60 hover:border-primary/60 transition-colors"
       >
         👍
@@ -124,14 +126,14 @@ function MiniRating({ requestId }: { requestId: string }) {
       <button
         type="button"
         onClick={() => rate("down")}
-        aria-label="Marcar como no útil"
+        aria-label={t.markNotUseful}
         className="rounded-md border border-border bg-muted/30 px-2 py-0.5 text-xs hover:bg-muted/60 hover:border-primary/60 transition-colors"
       >
         👎
       </button>
       {error && (
         <span className="text-[11px] text-red-400">
-          No se pudo enviar. Inténtalo más tarde.
+          {t.ratingError}
         </span>
       )}
     </div>
@@ -139,6 +141,7 @@ function MiniRating({ requestId }: { requestId: string }) {
 }
 
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  const { t } = useLang();
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
@@ -147,7 +150,7 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
       <button
         className="absolute top-4 right-4 text-white/70 hover:text-white text-2xl leading-none"
         onClick={onClose}
-        aria-label="Cerrar"
+        aria-label={t.close}
       >
         ✕
       </button>
@@ -184,6 +187,7 @@ function ObjectInfoBar({ info }: { info: ObjectInfo }) {
 }
 
 function HstJwstBadge({ info }: { info: HstJwstInfo }) {
+  const { t } = useLang();
   const label = [info.collection, info.instrument, info.filters].filter(Boolean).join(" / ");
   return (
     <div className="mt-1.5 flex items-center gap-2">
@@ -197,7 +201,7 @@ function HstJwstBadge({ info }: { info: HstJwstInfo }) {
           rel="noopener noreferrer"
           className="text-xs text-primary underline"
         >
-          Ver vista previa
+          {t.preview}
         </a>
       )}
     </div>
@@ -213,6 +217,7 @@ interface ChatMessageProps {
 }
 
 export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageProps) {
+  const { t } = useLang();
   const isUser = message.role === "user";
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const bubbleWidth = !isUser && message.observationHtml
@@ -242,7 +247,7 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
           {message.content}
         </div>
         {!isUser && onAction && message.suggestedActions && message.suggestedActions.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Análisis disponibles">
+          <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={t.availableAnalyses}>
             {message.suggestedActions.map((action) => (
               <button
                 key={action.label}
@@ -263,11 +268,11 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
           <div
             className="mt-3 rounded-lg overflow-hidden border border-border cursor-zoom-in max-w-[480px]"
             onClick={() => setLightboxSrc(message.imageUrl!)}
-            title="Clic para ampliar"
+            title={t.clickToEnlarge}
           >
             <img
               src={message.imageUrl}
-              alt="Imagen del análisis"
+              alt={t.analysisImage}
               className="w-full h-auto block"
             />
           </div>
@@ -279,11 +284,11 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
                 key={i}
                 className="rounded-lg overflow-hidden border border-border bg-muted/20 cursor-zoom-in"
                 onClick={() => setLightboxSrc(url)}
-                title="Clic para ampliar"
+                title={t.clickToEnlarge}
               >
                 <img
                   src={url}
-                  alt={`Gráfico de análisis ${i + 1}`}
+                  alt={`${t.analysisPlot} ${i + 1}`}
                   className="w-full h-auto block"
                 />
               </div>
@@ -293,7 +298,7 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
         {lightboxSrc && (
           <Lightbox
             src={lightboxSrc}
-            alt="Vista ampliada"
+            alt={t.enlargedView}
             onClose={() => setLightboxSrc(null)}
           />
         )}
