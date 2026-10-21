@@ -11,7 +11,8 @@ import {
   appendMessage,
   updateMessage,
 } from "@/lib/conversations";
-import { SERVICE_UNAVAILABLE_MESSAGE, sendMessageStream } from "@/lib/api";
+import { serviceUnavailableMessage, sendMessageStream } from "@/lib/api";
+import { useLang } from "@/lib/i18n";
 import type { AladinCoordinates, Conversation, HstJwstInfo, Message, ObjectInfo, ViewSnapshot } from "@/types/chat";
 
 const AladinViewer = lazy(() =>
@@ -19,6 +20,7 @@ const AladinViewer = lazy(() =>
 );
 
 export default function Chat() {
+  const { t } = useLang();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -172,7 +174,7 @@ export default function Chat() {
     } catch (err) {
       // e.g. the connection drops in the middle of the answer
       console.warn("chat stream failed", err);
-      updateMessage(convId, assistantId, { content: SERVICE_UNAVAILABLE_MESSAGE });
+      updateMessage(convId, assistantId, { content: serviceUnavailableMessage() });
       refreshConversations();
     } finally {
       setLoading(false);
@@ -220,7 +222,7 @@ export default function Chat() {
               >
                 <path d="M4 6l4 4 4-4H4z" />
               </svg>
-              <span className="font-medium">Vista interactiva</span>
+              <span className="font-medium">{t.interactiveView}</span>
               <span className="ml-auto text-xs opacity-60">
                 RA {activeViewerCoords.ra_deg.toFixed(2)}° Dec {activeViewerCoords.dec_deg.toFixed(2)}°
               </span>
@@ -228,7 +230,7 @@ export default function Chat() {
             <Suspense
               fallback={
                 <div className="px-4 pb-3 text-xs text-muted-foreground animate-pulse">
-                  Cargando visor interactivo...
+                  {t.loadingViewer}
                 </div>
               }
             >
@@ -244,7 +246,7 @@ export default function Chat() {
                 <div
                   onMouseDown={handleResizeMouseDown}
                   className="mt-1 h-2 flex items-center justify-center cursor-row-resize group"
-                  title="Arrastra para redimensionar"
+                  title={t.dragToResize}
                 >
                   <div className="w-10 h-1 rounded-full bg-border group-hover:bg-primary/50 transition-colors" />
                 </div>
@@ -265,34 +267,21 @@ export default function Chat() {
                 />
                 <img src="/logo-text.png" alt="astronomIA" className="h-10 mx-auto mb-2" />
                 <p className="text-muted-foreground max-w-lg text-sm mb-8">
-                  Tu asistente astronómico con inteligencia artificial. Explora el universo, analiza galaxias y planifica observaciones.
+                  {t.tagline}
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl w-full mb-8">
-                  <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
-                    <div className="text-2xl mb-2">🔭</div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Visualización</h3>
-                    <p className="text-xs text-muted-foreground">Explora el cielo con el visor interactivo en múltiples longitudes de onda.</p>
-                  </div>
-                  <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
-                    <div className="text-2xl mb-2">🌀</div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Análisis</h3>
-                    <p className="text-xs text-muted-foreground">Segmentación, fotometría, morfología y perfiles de brillo de galaxias.</p>
-                  </div>
-                  <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
-                    <div className="text-2xl mb-2">🌙</div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Observación</h3>
-                    <p className="text-xs text-muted-foreground">Planifica tus noches de observación según tu ubicación y condiciones.</p>
-                  </div>
+                  {t.chatCards.map(([emoji, title, text]) => (
+                    <div key={title} className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-sm p-4 text-left">
+                      <div className="text-2xl mb-2">{emoji}</div>
+                      <h3 className="text-sm font-semibold text-foreground mb-1">{title}</h3>
+                      <p className="text-xs text-muted-foreground">{text}</p>
+                    </div>
+                  ))}
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-2 max-w-xl">
-                  {[
-                    "Muéstrame la galaxia de Andrómeda",
-                    "Analiza M51",
-                    "¿Qué puedo observar esta noche desde Madrid?",
-                    "Busca NGC 1300",
-                  ].map((suggestion) => (
+                  {t.suggestions.map((suggestion) => (
                     <button
                       key={suggestion}
                       type="button"

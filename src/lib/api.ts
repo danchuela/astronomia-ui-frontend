@@ -1,11 +1,12 @@
+import { getLang, texts, type Lang } from "@/lib/i18n";
+
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
 // Shown when the BFF itself cannot be reached or answers with an error. The
 // technical detail only goes to the browser console, never to the chat.
-export const SERVICE_UNAVAILABLE_MESSAGE =
-  "astronomIA no está disponible en este momento. Revisa tu conexión a internet e inténtalo de nuevo en unos minutos.";
-const FEEDBACK_UNAVAILABLE_MESSAGE =
-  "No pudimos enviar tus comentarios en este momento. Inténtalo de nuevo en unos minutos.";
+export function serviceUnavailableMessage(): string {
+  return texts().serviceUnavailable;
+}
 
 export interface AnalyzePayload {
   request_id: string;
@@ -17,6 +18,9 @@ export interface AnalyzePayload {
   view_size_arcmin?: number;
   view_hips_id?: string;
   image_data?: string;
+  // Interface language (ES | EN button). The answer follows the language of the
+  // message; this one is used when the message does not show it ("M31").
+  language?: Lang;
 }
 
 export interface AnalyzeResponse {
@@ -50,7 +54,7 @@ export interface FeedbackPayload {
 export async function sendFeedback(payload: FeedbackPayload): Promise<void> {
   const base = API_BASE.replace(/\/$/, "");
   if (!base) {
-    throw new Error("La conexión con el servicio no está configurada.");
+    throw new Error(texts().notConfigured);
   }
 
   // Limpiamos campos opcionales vacios para no mandar "" innecesariamente.
@@ -75,12 +79,12 @@ export async function sendFeedback(payload: FeedbackPayload): Promise<void> {
     });
   } catch (err) {
     console.warn("feedback request failed", err);
-    throw new Error(FEEDBACK_UNAVAILABLE_MESSAGE);
+    throw new Error(texts().feedbackUnavailable);
   }
 
   if (!res.ok) {
     console.warn(`feedback failed: HTTP ${res.status}`, (await res.text()).slice(0, 200));
-    throw new Error(FEEDBACK_UNAVAILABLE_MESSAGE);
+    throw new Error(texts().feedbackUnavailable);
   }
 }
 
@@ -100,7 +104,7 @@ export async function sendMessageStream(
 ): Promise<void> {
   const base = API_BASE.replace(/\/$/, "");
   if (!base) {
-    onEvent({ type: "error", message: "La conexión con el servicio no está configurada." });
+    onEvent({ type: "error", message: texts().notConfigured });
     return;
   }
 
@@ -109,6 +113,7 @@ export async function sendMessageStream(
     request_id: requestId,
     message,
     messages: history.length > 0 ? history : undefined,
+    language: getLang(),
     ...(viewSnapshot && {
       view_ra_deg: viewSnapshot.ra_deg,
       view_dec_deg: viewSnapshot.dec_deg,
@@ -127,19 +132,19 @@ export async function sendMessageStream(
     });
   } catch (err) {
     console.warn("analyze request failed", err);
-    onEvent({ type: "error", message: SERVICE_UNAVAILABLE_MESSAGE });
+    onEvent({ type: "error", message: serviceUnavailableMessage() });
     return;
   }
 
   if (!res.ok) {
     console.warn(`analyze failed: HTTP ${res.status}`, (await res.text()).slice(0, 200));
-    onEvent({ type: "error", message: SERVICE_UNAVAILABLE_MESSAGE });
+    onEvent({ type: "error", message: serviceUnavailableMessage() });
     return;
   }
 
   const reader = res.body?.getReader();
   if (!reader) {
-    onEvent({ type: "error", message: SERVICE_UNAVAILABLE_MESSAGE });
+    onEvent({ type: "error", message: serviceUnavailableMessage() });
     return;
   }
 

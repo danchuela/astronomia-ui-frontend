@@ -1,23 +1,24 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useLang } from "@/lib/i18n";
 import type { AladinCoordinates, ViewSnapshot } from "@/types/chat";
 
 const SURVEY_GROUPS = [
   {
-    band: "Rayos X",
+    band: "xray",
     surveys: [
       { label: "XMM", hipsId: "xcatdb/P/XMM/PN/color" },
       { label: "RASS", hipsId: "CDS/P/RASS" },
     ],
   },
   {
-    band: "UV",
+    band: "uv",
     surveys: [
       { label: "GALEX FUV", hipsId: "CDS/P/GALEXGR6_7/FUV" },
       { label: "GALEX NUV", hipsId: "CDS/P/GALEXGR6_7/NUV" },
     ],
   },
   {
-    band: "Óptico",
+    band: "optical",
     surveys: [
       { label: "DSS2", hipsId: "CDS/P/DSS2/color" },
       { label: "SDSS", hipsId: "CDS/P/SDSS9/color" },
@@ -26,14 +27,14 @@ const SURVEY_GROUPS = [
     ],
   },
   {
-    band: "IR",
+    band: "ir",
     surveys: [
       { label: "2MASS", hipsId: "CDS/P/2MASS/color" },
       { label: "WISE", hipsId: "CDS/P/allWISE/color" },
     ],
   },
   {
-    band: "Radio",
+    band: "radio",
     surveys: [
       { label: "NVSS", hipsId: "CDS/P/NVSS" },
     ],
@@ -51,6 +52,7 @@ interface AladinViewerProps {
 }
 
 export function AladinViewer({ coordinates, objectName, onViewerReady, height = 400 }: AladinViewerProps) {
+  const { t } = useLang();
   const containerRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const aladinRef = useRef<any>(null);
@@ -202,10 +204,10 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     const isWebGL = error.toLowerCase().includes("webgl");
     return (
       <div className="mt-3 p-3 rounded-lg bg-muted/40 text-muted-foreground text-xs space-y-1">
-        <p>Visor interactivo no disponible: {error}</p>
+        <p>{t.viewerUnavailable}: {error}</p>
         {isWebGL && (
           <p>
-            Activa la aceleración por hardware en tu navegador (Chrome: chrome://settings/system) y recarga la página.
+            {t.webglHint}
           </p>
         )}
         <a
@@ -214,7 +216,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
           rel="noopener noreferrer"
           className="inline-block mt-1 text-primary underline"
         >
-          Abrir Aladin Lite en la web
+          {t.openAladin}
         </a>
       </div>
     );
@@ -226,7 +228,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         {SURVEY_GROUPS.map((group) => (
           <div key={group.band} className="flex items-center gap-1.5">
             <span className="text-[10px] text-muted-foreground/60 uppercase tracking-wider w-16 shrink-0 text-right">
-              {group.band}
+              {t.bands[group.band]}
             </span>
             {group.surveys.map((s) => (
               <button
@@ -249,7 +251,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-muted/60 z-10">
             <span className="text-sm text-muted-foreground animate-pulse">
-              Cargando visor interactivo...
+              {t.loadingViewer}
             </span>
           </div>
         )}
