@@ -30,7 +30,7 @@ export function ImageInspector({ image, onApply, onClose }: Props) {
         if (Math.max(result.width, result.height) > 512) setDraft(current => ({ ...current, uncertainty_samples: 0 }));
       }
     } catch (e) {
-      if (!controller.signal.aborted) setError(e instanceof Error && e.message === '503' ? labels.busy : e instanceof Error && e.message === 'resource_limit' ? labels.resourceLimit : labels.failed);
+      if (!controller.signal.aborted) setError(e instanceof Error && e.message === '408' ? t.uploadTimeout : e instanceof Error && e.message === '503' ? labels.busy : e instanceof Error && e.message === 'resource_limit' ? labels.resourceLimit : labels.failed);
     } finally { if (!controller.signal.aborted) setLoading(false); }
   };
   useEffect(() => {

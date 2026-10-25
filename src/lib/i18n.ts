@@ -81,6 +81,7 @@ const UI = {
     uploadReadError: "No se pudo leer el archivo. Vuelve a adjuntarlo.",
     uploadOneFile: "Adjunta una sola imagen cada vez.",
     uploadRejected: "No se ha podido admitir el archivo. Comprueba el formato y el límite de 8 MiB.",
+    uploadTimeout: "Se ha agotado el tiempo de subida. Vuelve a intentarlo.",
     fitsHdu: "Índice HDU del FITS (vacío: selección automática)",
     imageTools: {
       title: "Preparar imagen", scienceHdu: "HDU de ciencia", psfHdu: "HDU de PSF (misma escala)",
@@ -188,6 +189,7 @@ const UI = {
     uploadReadError: "The file could not be read. Attach it again.",
     uploadOneFile: "Attach one image at a time.",
     uploadRejected: "The file was not accepted. Check its format and the 8 MiB limit.",
+    uploadTimeout: "The upload timed out. Please try again.",
     fitsHdu: "FITS HDU index (blank: automatic selection)",
     imageTools: {
       title: "Prepare image", scienceHdu: "Science HDU", psfHdu: "PSF HDU (same pixel scale)",
