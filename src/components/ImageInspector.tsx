@@ -97,6 +97,7 @@ export function ImageInspector({ image, onApply, onClose }: Props) {
             <button type="button" title={labels.refresh} aria-label={labels.refresh} disabled={loading} onClick={() => void refresh(draft)} className="p-2 rounded border border-border disabled:opacity-50"><RefreshCw size={20} /></button>
           </div>
           {inspection && <p className="text-xs text-muted-foreground">{inspection.width} × {inspection.height} px · {inspection.sources.length} {labels.detections}</p>}
+          {inspection?.detection_status === 'resource_limit' && <p role="status" className="text-sm text-amber-300">{labels.resourceLimit}</p>}
           {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
         </section>
         <div className="order-1 md:order-none min-w-0 flex items-center justify-center bg-black/30 p-3 min-h-56">

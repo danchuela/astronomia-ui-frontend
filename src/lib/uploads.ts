@@ -18,6 +18,7 @@ export interface ImageInspection {
   height: number;
   preview: string;
   sha256: string;
+  detection_status?: 'ok' | 'no_detection' | 'resource_limit';
   sources: { label: number; x: number; y: number; area: number; automatic: boolean }[];
   hdus: { index: number; name: string; width: number; height: number }[];
 }
