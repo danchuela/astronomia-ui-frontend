@@ -144,6 +144,10 @@ export async function sendMessageStream(
   }
 
   if (!res.ok) {
+    if (res.status === 503) {
+      onEvent({ type: "error", message: texts().imageTools.busy });
+      return;
+    }
     if (uploadedImage && [413, 422].includes(res.status)) {
       onEvent({ type: "error", message: texts().uploadRejected });
       return;

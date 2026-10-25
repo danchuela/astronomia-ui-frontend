@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { Paperclip, FileImage, X, LoaderCircle, SendHorizontal } from "lucide-react";
+import { Paperclip, FileImage, X, LoaderCircle, SendHorizontal, SlidersHorizontal } from "lucide-react";
+import { ImageInspector } from '@/components/ImageInspector';
 import { IMAGE_ACCEPT, isFits, readUpload, validateUpload, type UploadedImage } from "@/lib/uploads";
 import { openHelp } from "@/lib/help";
 import { useLang } from "@/lib/i18n";
@@ -17,6 +18,7 @@ export function ChatInput({ onSend, disabled, attachment, missingAttachmentName,
   const [value, setValue] = useState("");
   const [reading, setReading] = useState(false);
   const [error, setError] = useState("");
+  const [inspecting, setInspecting] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const busy = disabled || reading;
@@ -74,12 +76,15 @@ export function ChatInput({ onSend, disabled, attachment, missingAttachmentName,
               onChange={e => { const n = Number(e.target.value); if (e.target.value === '' || (Number.isInteger(n) && n >= 0 && n <= 63)) onAttachmentChange({ ...attachment, hdu_index: e.target.value === '' ? undefined : n }); }}
               className="w-16 rounded border border-input bg-background px-1 py-1" />
           </label>}
+          {attachment && <button type="button" disabled={busy} title={t.imageTools.title} aria-label={t.imageTools.title}
+            onClick={() => setInspecting(true)} className="p-2 rounded hover:bg-muted disabled:opacity-50"><SlidersHorizontal className="h-4 w-4" /></button>}
           <button type="button" disabled={busy} onClick={() => { onAttachmentChange(); setError(''); }}
             aria-label={t.removeImage} title={t.removeImage} className="p-2 rounded hover:bg-muted disabled:opacity-50">
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
       )}
+      {inspecting && attachment && <ImageInspector image={attachment} onApply={onAttachmentChange} onClose={() => setInspecting(false)} />}
       {error && <p role="alert" className="mb-2 text-sm text-red-400">{error}</p>}
       <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3 items-end"
         onDragOver={e => { if (e.dataTransfer.types.includes('Files')) e.preventDefault(); }}
