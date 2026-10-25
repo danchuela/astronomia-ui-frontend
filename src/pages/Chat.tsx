@@ -10,6 +10,7 @@ import {
   createConversation,
   appendMessage,
   updateMessage,
+  updateConversation,
 } from "@/lib/conversations";
 import { serviceUnavailableMessage, sendMessageStream } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
@@ -62,6 +63,7 @@ export default function Chat() {
   const prevViewerCoordsRef = useRef<{ ra: number; dec: number } | null>(null);
 
   const current = currentId ? getConversation(currentId) : null;
+  const missingAttachment = !attachment ? current?.activeAttachmentName ?? undefined : undefined;
   const messages = useMemo(() => current?.messages ?? [], [current?.messages]);
 
   // Single viewer source: last resolve message (coordinates present, no analysis image)
@@ -116,12 +118,16 @@ export default function Chat() {
   }, [viewerOpen]);
 
   const handleSend = async (text: string) => {
+    if (missingAttachment) return;
     let convId = currentId;
     if (!convId) {
       const conv = createConversation(text.slice(0, 50));
       convId = conv.id;
       setCurrentId(convId);
-      if (attachment) setUploads(images => ({ ...images, [conv.id]: attachment, draft: undefined }));
+      if (attachment) {
+        setUploads(images => ({ ...images, [conv.id]: attachment, draft: undefined }));
+        updateConversation(conv.id, { activeAttachmentName: attachment.filename });
+      }
       refreshConversations();
     }
 
@@ -311,7 +317,7 @@ export default function Chat() {
                   key={msg.id}
                   message={msg}
                   onAction={i === messages.length - 1 ? handleSend : undefined}
-                  actionsDisabled={loading}
+                  actionsDisabled={loading || !!missingAttachment}
                 />
               ))
             )}
@@ -322,7 +328,11 @@ export default function Chat() {
         <div className="bg-background/70 backdrop-blur-md p-4 pr-20 sm:pr-4">
           <div className="max-w-3xl mx-auto">
             <ChatInput key={currentId ?? 'draft'} onSend={handleSend} disabled={loading}
-              attachment={attachment} onAttachmentChange={image => setUploads(images => ({ ...images, [currentId ?? 'draft']: image }))} />
+              attachment={attachment} missingAttachmentName={missingAttachment} onAttachmentChange={image => {
+                setUploads(images => ({ ...images, [currentId ?? 'draft']: image }));
+                if (currentId) updateConversation(currentId, { activeAttachmentName: image?.filename ?? null });
+                refreshConversations();
+              }} />
           </div>
         </div>
       </div>

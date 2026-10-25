@@ -8,10 +8,11 @@ interface ChatInputProps {
   onSend: (text: string) => void;
   disabled?: boolean;
   attachment?: UploadedImage;
+  missingAttachmentName?: string;
   onAttachmentChange: (image?: UploadedImage) => void;
 }
 
-export function ChatInput({ onSend, disabled, attachment, onAttachmentChange }: ChatInputProps) {
+export function ChatInput({ onSend, disabled, attachment, missingAttachmentName, onAttachmentChange }: ChatInputProps) {
   const { t } = useLang();
   const [value, setValue] = useState("");
   const [reading, setReading] = useState(false);
@@ -45,7 +46,7 @@ export function ChatInput({ onSend, disabled, attachment, onAttachmentChange }: 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = value.trim();
-    if ((!trimmed && !attachment) || busy) return;
+    if ((!trimmed && !attachment) || busy || missingAttachmentName) return;
     onSend(trimmed || t.analyzeUploadedImage);
     setValue("");
   };
@@ -59,14 +60,14 @@ export function ChatInput({ onSend, disabled, attachment, onAttachmentChange }: 
 
   return (
     <div>
-      {attachment && (
+      {(attachment || missingAttachmentName) && (
         <div className="mb-2 flex flex-wrap min-w-0 items-center gap-2 rounded-lg border border-border bg-muted/30 p-2">
           <FileImage className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
           <div className="min-w-0 flex-1">
-            <span className="block truncate text-[11px] text-muted-foreground">{t.analysisFile}</span>
-            <span className="block truncate text-sm" title={attachment.filename}>{attachment.filename}</span>
+            <span className="block truncate text-[11px] text-muted-foreground" role={missingAttachmentName ? 'status' : undefined}>{missingAttachmentName ? t.attachmentMissing : t.analysisFile}</span>
+            <span className="block truncate text-sm" title={attachment?.filename ?? missingAttachmentName}>{attachment?.filename ?? missingAttachmentName}</span>
           </div>
-          {isFits(attachment.filename) && <label className="order-4 basis-full sm:order-none sm:basis-auto flex shrink-0 items-center justify-end gap-1 text-xs text-muted-foreground">
+          {attachment && isFits(attachment.filename) && <label className="order-4 basis-full sm:order-none sm:basis-auto flex shrink-0 items-center justify-end gap-1 text-xs text-muted-foreground">
             HDU
             <input type="number" min="0" max="63" step="1" placeholder="Auto" aria-label={t.fitsHdu}
               value={attachment.hdu_index ?? ''} disabled={busy}
@@ -104,7 +105,7 @@ export function ChatInput({ onSend, disabled, attachment, onAttachmentChange }: 
           type="submit"
           aria-label={t.send}
           title={t.send}
-          disabled={(!value.trim() && !attachment) || busy}
+          disabled={(!value.trim() && !attachment) || busy || !!missingAttachmentName}
           className="h-12 w-12 sm:w-auto sm:px-5 flex items-center justify-center rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity shrink-0"
         >
           <SendHorizontal className="h-5 w-5 sm:hidden" aria-hidden="true" />

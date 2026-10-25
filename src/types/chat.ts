@@ -87,4 +87,5 @@ export interface Conversation {
   title: string;
   messages: Message[];
   updatedAt: number;
+  activeAttachmentName?: string | null;
 }
