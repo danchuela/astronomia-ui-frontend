@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { ChatMessage } from "@/components/ChatMessage";
+import { WaitingTips } from "@/components/WaitingTips";
 import { ChatInput } from "@/components/ChatInput";
 import { HelpButton } from "@/components/HelpButton";
 import { FeedbackButton } from "@/components/FeedbackButton";
@@ -253,8 +254,9 @@ export default function Chat() {
             </button>
             <Suspense
               fallback={
-                <div className="px-4 pb-3 text-xs text-muted-foreground animate-pulse">
-                  {t.loadingViewer}
+                <div className="px-4 pb-3 text-xs text-muted-foreground">
+                  <p className="animate-pulse">{t.loadingViewer}</p>
+                  <WaitingTips compact />
                 </div>
               }
             >
@@ -326,6 +328,7 @@ export default function Chat() {
                   studyInput={studyInputs.current[msg.id]}
                   onAction={i === messages.length - 1 ? handleSend : undefined}
                   actionsDisabled={loading || !!missingAttachment}
+                  pending={loading && i === messages.length - 1 && msg.role === "assistant"}
                 />
               ))
             )}

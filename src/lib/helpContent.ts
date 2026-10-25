@@ -58,6 +58,11 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
           "astronomIA depende de servicios externos (catálogos astronómicos, imágenes de surveys, efemérides, meteorología y modelos de lenguaje). Si alguno falla, verás un aviso de que esa parte está teniendo problemas y una sugerencia de otra función que sí puedes usar mientras tanto. El equipo recibe un aviso automático con el diagnóstico para arreglarlo. Si el problema sigue, vuelve a intentarlo en unos minutos.",
       },
       {
+        term: "Mientras esperas",
+        definition:
+          "Algunas respuestas tardan unos segundos: se consultan catálogos, se descargan imágenes de los surveys o se calculan efemérides y el clima. Mientras tanto verás el paso que se está haciendo (por ejemplo, \"Resolviendo objetivo…\") y, debajo, una curiosidad del universo que cambia cada pocos segundos. También aparecen mientras se carga el visor interactivo.",
+      },
+      {
         term: "Botones de análisis",
         definition:
           'Cuando pides ver un objeto (por ejemplo "Muéstrame M51"), astronomIA lo abre en el visor y te ofrece botones con los análisis disponibles: morfología completa, segmentación e isofotas, fotometría básica y perfil de brillo. Ajusta antes el encuadre, el zoom y la banda en el visor, y haz clic en el análisis que quieras. También puedes seguir escribiendo para pedir algo más específico.',
@@ -530,6 +535,11 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
         term: "If a service does not respond",
         definition:
           "astronomIA relies on external services (astronomical catalogues, survey images, ephemerides, weather and language models). If one fails, you will see a notice that this part is having problems and a suggestion of another feature you can use in the meantime. The team receives an automatic alert with the diagnosis to fix it. If the problem continues, try again in a few minutes.",
+      },
+      {
+        term: "While you wait",
+        definition:
+          "Some answers take a few seconds: catalogues are queried, survey images are downloaded or ephemerides and weather are computed. Meanwhile you will see the step in progress (for example, \"Resolving target…\") and, below it, a fact about the universe that changes every few seconds. They also appear while the interactive viewer loads.",
       },
       {
         term: "Analysis buttons",

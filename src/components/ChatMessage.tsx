@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { HstJwstInfo, Message, ObjectInfo } from "@/types/chat";
 import { sendFeedback } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
+import { WaitingTips } from "@/components/WaitingTips";
 import { FileImage } from "lucide-react";
 import { SaveStudyButton } from './SaveStudyButton';
 import type { UploadedImage } from '@/lib/uploads';
@@ -220,9 +221,11 @@ interface ChatMessageProps {
   studyPrompt?: string;
   studyInput?: UploadedImage;
   readOnly?: boolean;
+  // The answer is still being computed: show the progress message and rotating facts.
+  pending?: boolean;
 }
 
-export function ChatMessage({ message, onAction, actionsDisabled, studyPrompt, studyInput, readOnly }: ChatMessageProps) {
+export function ChatMessage({ message, onAction, actionsDisabled, pending, studyPrompt, studyInput, readOnly }: ChatMessageProps) {
   const { t } = useLang();
   const isUser = message.role === "user";
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -249,9 +252,10 @@ export function ChatMessage({ message, onAction, actionsDisabled, studyPrompt, s
             <span className="text-xs text-muted-foreground">astronomIA</span>
           </div>
         )}
-        <div className="whitespace-pre-wrap break-words text-sm leading-relaxed">
+        <div className={`whitespace-pre-wrap break-words text-sm leading-relaxed${pending && !isUser ? " animate-pulse" : ""}`}>
           {message.content}
         </div>
+        {pending && !isUser && <WaitingTips />}
         {message.attachmentName && <p className="mb-2 flex min-w-0 items-center gap-2 text-xs opacity-80">
           <FileImage className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span className="break-all">{message.attachmentName}</span>
