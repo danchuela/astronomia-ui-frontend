@@ -28,7 +28,10 @@ export async function inspectUpload(upload: UploadedImage, signal?: AbortSignal)
     method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
     body: JSON.stringify({ ...upload, source_point: undefined, region: undefined, uncertainty_samples: 0 }),
   });
-  if (!response.ok) throw new Error(String(response.status));
+  if (!response.ok) {
+    const body = await response.json().catch(() => undefined);
+    throw new Error(body?.detail?.code === 'resource_limit' ? 'resource_limit' : String(response.status));
+  }
   return response.json();
 }
 
