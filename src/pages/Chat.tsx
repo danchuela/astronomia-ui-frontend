@@ -10,10 +10,12 @@ import {
   createConversation,
   appendMessage,
   updateMessage,
+  updateConversation,
 } from "@/lib/conversations";
 import { serviceUnavailableMessage, sendMessageStream } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
 import type { AladinCoordinates, Conversation, HstJwstInfo, Message, ObjectInfo, ViewSnapshot } from "@/types/chat";
+import type { UploadedImage } from "@/lib/uploads";
 
 const AladinViewer = lazy(() =>
   import("@/components/AladinViewer").then((mod) => ({ default: mod.AladinViewer }))
@@ -25,6 +27,9 @@ export default function Chat() {
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.matchMedia("(max-width: 767px)").matches);
   const [loading, setLoading] = useState(false);
+  // Keep private file bytes in memory, not in the localStorage conversation log.
+  const [uploads, setUploads] = useState<Record<string, UploadedImage | undefined>>({});
+  const attachment = uploads[currentId ?? 'draft'];
   const [viewerOpen, setViewerOpen] = useState(true);
   const [viewerHeight, setViewerHeight] = useState(400);
   useEffect(() => {
@@ -58,6 +63,7 @@ export default function Chat() {
   const prevViewerCoordsRef = useRef<{ ra: number; dec: number } | null>(null);
 
   const current = currentId ? getConversation(currentId) : null;
+  const missingAttachment = !attachment ? current?.activeAttachmentName ?? undefined : undefined;
   const messages = useMemo(() => current?.messages ?? [], [current?.messages]);
 
   // Single viewer source: last resolve message (coordinates present, no analysis image)
@@ -112,11 +118,16 @@ export default function Chat() {
   }, [viewerOpen]);
 
   const handleSend = async (text: string) => {
+    if (missingAttachment) return;
     let convId = currentId;
     if (!convId) {
       const conv = createConversation(text.slice(0, 50));
       convId = conv.id;
       setCurrentId(convId);
+      if (attachment) {
+        setUploads(images => ({ ...images, [conv.id]: attachment, draft: undefined }));
+        updateConversation(conv.id, { activeAttachmentName: attachment.filename });
+      }
       refreshConversations();
     }
 
@@ -124,6 +135,7 @@ export default function Chat() {
       id: crypto.randomUUID(),
       role: "user",
       content: text,
+      attachmentName: attachment?.filename,
     };
     appendMessage(convId, userMessage);
     refreshConversations();
@@ -140,9 +152,8 @@ export default function Chat() {
       .map((m) => ({ role: m.role, content: m.content }));
 
     const base = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
-    const viewerSnapshot = viewerGetterRef.current ? (await viewerGetterRef.current() ?? undefined) : undefined;
-
     try {
+      const viewerSnapshot = !attachment && viewerGetterRef.current ? (await viewerGetterRef.current() ?? undefined) : undefined;
       await sendMessageStream(text, convId, history, (event) => {
         if (event.type === "status") {
           updateMessage(convId, assistantId, { content: event.message });
@@ -177,7 +188,7 @@ export default function Chat() {
           updateMessage(convId, assistantId, { content: event.message });
         }
         refreshConversations();
-      }, viewerSnapshot);
+      }, viewerSnapshot, attachment);
     } catch (err) {
       // e.g. the connection drops in the middle of the answer
       console.warn("chat stream failed", err);
@@ -306,7 +317,7 @@ export default function Chat() {
                   key={msg.id}
                   message={msg}
                   onAction={i === messages.length - 1 ? handleSend : undefined}
-                  actionsDisabled={loading}
+                  actionsDisabled={loading || !!missingAttachment}
                 />
               ))
             )}
@@ -316,7 +327,12 @@ export default function Chat() {
 
         <div className="bg-background/70 backdrop-blur-md p-4 pr-20 sm:pr-4">
           <div className="max-w-3xl mx-auto">
-            <ChatInput onSend={handleSend} disabled={loading} />
+            <ChatInput key={currentId ?? 'draft'} onSend={handleSend} disabled={loading}
+              attachment={attachment} missingAttachmentName={missingAttachment} onAttachmentChange={image => {
+                setUploads(images => ({ ...images, [currentId ?? 'draft']: image }));
+                if (currentId) updateConversation(currentId, { activeAttachmentName: image?.filename ?? null });
+                refreshConversations();
+              }} />
           </div>
         </div>
       </div>

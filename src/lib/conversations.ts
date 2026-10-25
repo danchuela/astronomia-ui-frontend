@@ -41,7 +41,7 @@ export function createConversation(title: string = ""): Conversation {
 
 export function updateConversation(
   id: string,
-  update: Partial<Pick<Conversation, "title" | "messages">>
+  update: Partial<Pick<Conversation, "title" | "messages" | "activeAttachmentName">>
 ): void {
   const list = load();
   const idx = list.findIndex((c) => c.id === id);

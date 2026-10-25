@@ -1,5 +1,6 @@
 import { getLang, texts, type Lang } from "@/lib/i18n";
 import type { AnalysisQuality, ViewCaptureMetadata, ViewSnapshot } from "@/types/chat";
+import type { UploadedImage } from "@/lib/uploads";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
@@ -19,6 +20,7 @@ export interface AnalyzePayload {
   view_size_arcmin?: number;
   view_hips_id?: string;
   image_data?: string;
+  uploaded_image?: UploadedImage;
   view_metadata?: ViewCaptureMetadata;
   // Interface language (ES | EN button). The answer follows the language of the
   // message; this one is used when the message does not show it ("M31").
@@ -102,7 +104,8 @@ export async function sendMessageStream(
   conversationId: string,
   history: { role: "user" | "assistant"; content: string }[],
   onEvent: (event: StreamEvent) => void,
-  viewSnapshot?: ViewSnapshot
+  viewSnapshot?: ViewSnapshot,
+  uploadedImage?: UploadedImage
 ): Promise<void> {
   const base = API_BASE.replace(/\/$/, "");
   if (!base) {
@@ -116,7 +119,8 @@ export async function sendMessageStream(
     message,
     messages: history.length > 0 ? history : undefined,
     language: getLang(),
-    ...(viewSnapshot && {
+    ...(uploadedImage && { uploaded_image: uploadedImage }),
+    ...(!uploadedImage && viewSnapshot && {
       view_ra_deg: viewSnapshot.ra_deg,
       view_dec_deg: viewSnapshot.dec_deg,
       view_size_arcmin: viewSnapshot.size_arcmin,
@@ -140,6 +144,10 @@ export async function sendMessageStream(
   }
 
   if (!res.ok) {
+    if (uploadedImage && [413, 422].includes(res.status)) {
+      onEvent({ type: "error", message: texts().uploadRejected });
+      return;
+    }
     console.warn(`analyze failed: HTTP ${res.status}`, (await res.text()).slice(0, 200));
     onEvent({ type: "error", message: serviceUnavailableMessage() });
     return;
