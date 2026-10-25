@@ -16,6 +16,7 @@ export const STUDY_TEXTS = {
     limits: 'Análisis exploratorio. La calibración no se ha verificado. La estabilidad frente al ruido, cuando aparece, no equivale a errores totales.',
     storedLocally: 'Copia guardada en este navegador, sin sincronización entre dispositivos.',
     preview: 'Imagen de trabajo', plot: 'Diagnóstico', noValues: 'Sin valores numéricos disponibles',
+    csvPrecision: 'El CSV conserva las tablas completas y la precisión numérica original.',
   },
   en: {
     title: 'Studies', local: 'This browser', save: 'Save study', saved: 'Study saved',
@@ -34,5 +35,6 @@ export const STUDY_TEXTS = {
     limits: 'Exploratory analysis. Calibration has not been verified. Noise stability, when reported, does not represent total uncertainties.',
     storedLocally: 'Saved in this browser, without cross-device synchronization.',
     preview: 'Working image', plot: 'Diagnostic', noValues: 'No numerical values available',
+    csvPrecision: 'CSV preserves the complete tables and original numerical precision.',
   },
 } as const;

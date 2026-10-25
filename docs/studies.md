@@ -31,7 +31,9 @@ parameters, software versions and provenance. Formula-like strings are escaped;
 negative numbers remain numeric. No unit conversion or calibration is inferred.
 PDF embeds a locally served DejaVu font and cached images; it does not send data
 to a conversion service or invoke an LLM. Numeric values in the PDF are formatted
-for reading; CSV retains full precision. PDF is text/images, not executable HTML.
+for reading; long numeric arrays are represented by their plots rather than
+dumped line by line. CSV retains complete tables and full precision. PDF is
+text/images, not executable HTML.
 
 Comparisons display two independent result sets, without automatic alignment,
 PSF matching, resampling or physical interpretation of differences. Unsupported

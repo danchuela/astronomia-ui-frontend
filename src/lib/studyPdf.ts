@@ -44,12 +44,14 @@ export async function studyPdf(study: Study, lang: Lang): Promise<Blob> {
   }
   heading(t.results);
   const measurements = study.message.analysisResults?.measurements;
-  const rows = measurements && typeof measurements === 'object' ? resultRows({ measurements }) : [];
+  const rows = measurements && typeof measurements === 'object'
+    ? resultRows({ measurements: Object.fromEntries(Object.entries(measurements).filter(([, value]) => value == null || typeof value !== 'object')) }) : [];
   if (!rows.length) text(t.noValues);
   for (const row of rows) {
-    const value = typeof row.value === 'number' ? row.value.toPrecision(9) : row.value == null ? '-' : String(row.value);
+    const value = typeof row.value === 'number' ? String(Number(row.value.toPrecision(9))) : row.value == null ? '-' : String(row.value);
     text(`${row.parameter}: ${value}`, 8, 4);
   }
+  text(t.csvPrecision, 8);
   heading(t.provenance);
   const source = study.message.analysisResults ?? {};
   const provenance = resultRows(Object.fromEntries(['image_provenance', 'analysis_parameters', 'segmentation_metadata', 'provenance']

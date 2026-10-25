@@ -14,7 +14,7 @@ function StudyPreview({ study }: { study: Study }) {
     setMessage(local.message);
     return local.revoke;
   }, [study]);
-  return message ? <ChatMessage message={message} readOnly /> : null;
+  return message ? <ChatMessage message={message} readOnly /> : <LoaderCircle role="status" className="h-5 w-5 animate-spin" />;
 }
 
 function Comparison({ studies }: { studies: Study[] }) {
@@ -30,7 +30,10 @@ function Comparison({ studies }: { studies: Study[] }) {
         <thead className="border-b border-border"><tr><th className="w-2/5 py-3 pr-3">{t.studies.parameter}</th>{studies.map(study => <th key={study.id} className="break-words px-2 py-3 align-top">{study.title}</th>)}</tr></thead>
         <tbody>{parameters.map(parameter => <tr key={parameter} className="border-b border-border/50">
           <th className="break-all py-2 pr-3 font-normal text-muted-foreground">{parameter}</th>
-          {measurements.map((values, i) => <td key={i} className="break-all px-2 py-2 tabular-nums">{values.get(parameter) == null ? '—' : String(values.get(parameter))}</td>)}
+          {measurements.map((values, i) => {
+            const value = values.get(parameter);
+            return <td key={i} className="break-all px-2 py-2 tabular-nums">{value == null ? '—' : typeof value === 'number' ? String(Number(value.toPrecision(6))) : String(value)}</td>;
+          })}
         </tr>)}</tbody>
       </table>
     </div>
