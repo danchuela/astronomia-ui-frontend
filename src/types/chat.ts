@@ -53,6 +53,8 @@ export interface AnalysisQuality {
   reason?: string;
   modules?: Record<string, "ok" | "suspect" | "unavailable" | "missing">;
   issues?: string[];
+  input_kind?: "rendered" | "fits";
+  source?: "upload" | "viewer";
 }
 
 // Quick-reply button sent by the BFF (e.g. analyses after "Muéstrame M51").
@@ -65,6 +67,7 @@ export interface Message {
   id: string;
   role: MessageRole;
   content: string;
+  attachmentName?: string;
   imageUrl?: string;
   analysisPlots?: string[];   // analysis plot names (cas, radial_profile, etc.)
   analysisQuality?: AnalysisQuality;
@@ -84,4 +87,5 @@ export interface Conversation {
   title: string;
   messages: Message[];
   updatedAt: number;
+  activeAttachmentName?: string | null;
 }

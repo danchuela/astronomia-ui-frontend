@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { HstJwstInfo, Message, ObjectInfo } from "@/types/chat";
 import { sendFeedback } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
+import { FileImage } from "lucide-react";
 
 const OBSERVATION_FRAME_MIN_HEIGHT = 420;
 const OBSERVATION_FRAME_HEIGHT_EVENT = "astronomia-observation-frame-height";
@@ -246,6 +247,10 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
         <div className="whitespace-pre-wrap break-words text-sm leading-relaxed">
           {message.content}
         </div>
+        {message.attachmentName && <p className="mb-2 flex min-w-0 items-center gap-2 text-xs opacity-80">
+          <FileImage className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="break-all">{message.attachmentName}</span>
+        </p>}
         {message.analysisQuality && (
           <details className="mt-3 border-t border-border pt-2 text-xs text-muted-foreground">
             <summary className="cursor-pointer font-medium text-foreground">
@@ -253,7 +258,7 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
             </summary>
             {message.analysisQuality.modules && (
               <>
-                <p className="mt-2 leading-relaxed">{t.analysisQuality.limits}</p>
+                <p className="mt-2 leading-relaxed">{message.analysisQuality.input_kind === 'fits' ? t.fitsLimits : t.analysisQuality.limits}</p>
                 <dl className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1">
                   {Object.entries(message.analysisQuality.modules).map(([name, state]) => (
                     <div key={name} className="contents">
