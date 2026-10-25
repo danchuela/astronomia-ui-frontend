@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Paperclip, FileImage, X, LoaderCircle, SendHorizontal } from "lucide-react";
 import { IMAGE_ACCEPT, isFits, readUpload, validateUpload, type UploadedImage } from "@/lib/uploads";
 import { openHelp } from "@/lib/help";
@@ -17,7 +17,19 @@ export function ChatInput({ onSend, disabled, attachment, onAttachmentChange }: 
   const [reading, setReading] = useState(false);
   const [error, setError] = useState("");
   const fileInput = useRef<HTMLInputElement>(null);
+  const textarea = useRef<HTMLTextAreaElement>(null);
   const busy = disabled || reading;
+
+  useLayoutEffect(() => {
+    const resize = () => {
+      if (!textarea.current) return;
+      textarea.current.style.height = '48px';
+      textarea.current.style.height = `${Math.min(128, Math.max(48, textarea.current.scrollHeight + 2))}px`;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    return () => window.removeEventListener('resize', resize);
+  }, [value]);
 
   const attach = async (file?: File) => {
     if (!file || busy) return;
@@ -79,6 +91,7 @@ export function ChatInput({ onSend, disabled, attachment, onAttachmentChange }: 
           {reading ? <LoaderCircle className="h-5 w-5 animate-spin" aria-hidden="true" /> : <Paperclip className="h-5 w-5" aria-hidden="true" />}
         </button>
         <textarea
+          ref={textarea}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
