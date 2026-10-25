@@ -1,4 +1,5 @@
 import { getLang, texts, type Lang } from "@/lib/i18n";
+import type { AnalysisQuality, ViewCaptureMetadata, ViewSnapshot } from "@/types/chat";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
@@ -18,6 +19,7 @@ export interface AnalyzePayload {
   view_size_arcmin?: number;
   view_hips_id?: string;
   image_data?: string;
+  view_metadata?: ViewCaptureMetadata;
   // Interface language (ES | EN button). The answer follows the language of the
   // message; this one is used when the message does not show it ("M31").
   language?: Lang;
@@ -92,7 +94,7 @@ export type StreamEvent =
   | { type: "status"; message: string }
   | { type: "summary"; summary: string }
   | { type: "artifacts"; request_id: string; image_url?: string; coordinates?: CoordinatesPayload; object_info?: Record<string, unknown>; hst_jwst?: Record<string, unknown>; html_chart?: string; analysis_plots?: string[] }
-  | { type: "end"; request_id: string; status: string; summary?: string; coordinates?: CoordinatesPayload; object_info?: Record<string, unknown>; hst_jwst?: Record<string, unknown>; object_name?: string; suggested_actions?: { label: string; message: string }[] }
+  | { type: "end"; request_id: string; status: string; summary?: string; coordinates?: CoordinatesPayload; object_info?: Record<string, unknown>; hst_jwst?: Record<string, unknown>; object_name?: string; analysis_quality?: AnalysisQuality; suggested_actions?: { label: string; message: string }[] }
   | { type: "error"; message: string };
 
 export async function sendMessageStream(
@@ -100,7 +102,7 @@ export async function sendMessageStream(
   conversationId: string,
   history: { role: "user" | "assistant"; content: string }[],
   onEvent: (event: StreamEvent) => void,
-  viewSnapshot?: { ra_deg: number; dec_deg: number; size_arcmin: number; hips_id: string; image_data?: string }
+  viewSnapshot?: ViewSnapshot
 ): Promise<void> {
   const base = API_BASE.replace(/\/$/, "");
   if (!base) {
@@ -119,6 +121,7 @@ export async function sendMessageStream(
       view_dec_deg: viewSnapshot.dec_deg,
       view_size_arcmin: viewSnapshot.size_arcmin,
       view_hips_id: viewSnapshot.hips_id,
+      view_metadata: viewSnapshot.view_metadata,
       ...(viewSnapshot.image_data && { image_data: viewSnapshot.image_data }),
     }),
   };

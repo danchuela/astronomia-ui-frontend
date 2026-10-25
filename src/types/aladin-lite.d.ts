@@ -6,6 +6,7 @@ declare module "aladin-lite" {
     projection?: string;
     showReticle?: boolean;
     showZoomControl?: boolean;
+    showFov?: boolean;
     showLayersControl?: boolean;
     showGotoControl?: boolean;
     showFrame?: boolean;

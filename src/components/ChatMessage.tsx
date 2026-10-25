@@ -246,6 +246,29 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
         <div className="whitespace-pre-wrap break-words text-sm leading-relaxed">
           {message.content}
         </div>
+        {message.analysisQuality && (
+          <details className="mt-3 border-t border-border pt-2 text-xs text-muted-foreground">
+            <summary className="cursor-pointer font-medium text-foreground">
+              {t.analysisQuality.title}: {t.analysisQuality[message.analysisQuality.status]}
+            </summary>
+            {message.analysisQuality.modules && (
+              <>
+                <p className="mt-2 leading-relaxed">{t.analysisQuality.limits}</p>
+                <dl className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1">
+                  {Object.entries(message.analysisQuality.modules).map(([name, state]) => (
+                    <div key={name} className="contents">
+                      <dt>{t.analysisQuality.modules[name as keyof typeof t.analysisQuality.modules] ?? name}</dt>
+                      <dd>{t.analysisQuality.states[state]}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {message.analysisQuality.issues?.includes("source_touches_boundary") && <p className="mt-2">{t.analysisQuality.boundary}</p>}
+                {message.analysisQuality.issues?.includes("suspect_measurement") && <p className="mt-2">{t.analysisQuality.suspect}</p>}
+                {message.analysisQuality.issues?.includes("multiple_sources") && <p className="mt-2">{t.analysisQuality.multiple}</p>}
+              </>
+            )}
+          </details>
+        )}
         {!isUser && onAction && message.suggestedActions && message.suggestedActions.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={t.availableAnalyses}>
             {message.suggestedActions.map((action) => (
