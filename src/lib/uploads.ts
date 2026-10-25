@@ -36,6 +36,12 @@ export function isFits(filename: string): boolean {
   return /\.(fits|fit|fts)$/i.test(filename);
 }
 
+export function withScienceHdu(image: UploadedImage, hdu: number | undefined): UploadedImage {
+  if (image.hdu_index === hdu) return image;
+  return { ...image, hdu_index: hdu, source_point: undefined, region: undefined,
+    psf_hdu_index: undefined, error_hdu_index: undefined, error_kind: undefined, uncertainty_samples: 0 };
+}
+
 export function validateUpload(file: Pick<File, 'name' | 'size'>): 'format' | 'size' | null {
   if (!/\.(png|jpe?g|tiff?|fits|fit|fts)$/i.test(file.name) || file.name.length > 180) return 'format';
   if (!file.size || file.size > MAX_UPLOAD_BYTES) return 'size';

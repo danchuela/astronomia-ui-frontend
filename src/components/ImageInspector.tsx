@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Crosshair, Crop, RotateCcw, X, LoaderCircle, RefreshCw, Check } from 'lucide-react';
-import { inspectUpload, isFits, type UploadedImage, type ImageInspection } from '@/lib/uploads';
+import { inspectUpload, isFits, withScienceHdu, type UploadedImage, type ImageInspection } from '@/lib/uploads';
 import { useLang } from '@/lib/i18n';
 
 interface Props { image: UploadedImage; onApply: (image: UploadedImage) => void; onClose: () => void }
@@ -53,7 +53,7 @@ export function ImageInspector({ image, onApply, onClose }: Props) {
         aria-label={label} disabled={loading} value={draft[key] ?? ''}
         onChange={e => { const value = e.target.value === '' ? undefined : Number(e.target.value);
           if (value === undefined || (Number.isInteger(value) && value >= 0 && value <= 63))
-            setDraft(current => ({ ...current, [key]: value, ...(key === 'hdu_index' ? { source_point: undefined, region: undefined } : {}) })); }}
+            setDraft(current => key === 'hdu_index' ? withScienceHdu(current, value) : { ...current, [key]: value }); }}
         className="w-20 shrink-0 rounded border border-input bg-background p-2" />
     </label>
   );

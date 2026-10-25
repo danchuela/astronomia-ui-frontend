@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { Paperclip, FileImage, X, LoaderCircle, SendHorizontal, SlidersHorizontal } from "lucide-react";
 import { ImageInspector } from '@/components/ImageInspector';
-import { IMAGE_ACCEPT, isFits, readUpload, validateUpload, type UploadedImage } from "@/lib/uploads";
+import { IMAGE_ACCEPT, isFits, readUpload, validateUpload, withScienceHdu, type UploadedImage } from "@/lib/uploads";
 import { openHelp } from "@/lib/help";
 import { useLang } from "@/lib/i18n";
 
@@ -73,7 +73,7 @@ export function ChatInput({ onSend, disabled, attachment, missingAttachmentName,
             HDU
             <input type="number" min="0" max="63" step="1" placeholder="Auto" aria-label={t.fitsHdu}
               value={attachment.hdu_index ?? ''} disabled={busy}
-              onChange={e => { const n = Number(e.target.value); if (e.target.value === '' || (Number.isInteger(n) && n >= 0 && n <= 63)) onAttachmentChange({ ...attachment, hdu_index: e.target.value === '' ? undefined : n }); }}
+              onChange={e => { const n = Number(e.target.value); if (e.target.value === '' || (Number.isInteger(n) && n >= 0 && n <= 63)) onAttachmentChange(withScienceHdu(attachment, e.target.value === '' ? undefined : n)); }}
               className="w-16 rounded border border-input bg-background px-1 py-1" />
           </label>}
           {attachment && <button type="button" disabled={busy} title={t.imageTools.title} aria-label={t.imageTools.title}
