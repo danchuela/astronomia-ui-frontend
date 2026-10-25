@@ -259,6 +259,14 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
             {message.analysisQuality.modules && (
               <>
                 <p className="mt-2 leading-relaxed">{message.analysisQuality.input_kind === 'fits' ? t.fitsLimits : t.analysisQuality.limits}</p>
+                {message.analysisQuality.psf === 'user_supplied' && <p className="mt-2">{t.analysisQuality.suppliedPsf}</p>}
+                {message.analysisQuality.uncertainty === 'user_sigma' && <p className="mt-2">{t.analysisQuality.suppliedSigma}</p>}
+                {message.analysisQuality.noise_stability?.status === 'available' && <>
+                  <p className="mt-2">{t.analysisQuality.stability}</p>
+                  <dl className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1">
+                    {Object.entries(message.analysisQuality.noise_stability.intervals).map(([name, value]) => <div key={name} className="contents"><dt className="break-all">{name}</dt><dd>σ = {value.std.toPrecision(3)}</dd></div>)}
+                  </dl>
+                </>}
                 <dl className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1">
                   {Object.entries(message.analysisQuality.modules).map(([name, state]) => (
                     <div key={name} className="contents">
@@ -269,7 +277,8 @@ export function ChatMessage({ message, onAction, actionsDisabled }: ChatMessageP
                 </dl>
                 {message.analysisQuality.issues?.includes("source_touches_boundary") && <p className="mt-2">{t.analysisQuality.boundary}</p>}
                 {message.analysisQuality.issues?.includes("suspect_measurement") && <p className="mt-2">{t.analysisQuality.suspect}</p>}
-                {message.analysisQuality.issues?.includes("multiple_sources") && <p className="mt-2">{t.analysisQuality.multiple}</p>}
+                {message.analysisQuality.issues?.includes("user_selected_source") ? <p className="mt-2">{t.analysisQuality.manual}</p> : message.analysisQuality.issues?.includes("multiple_sources") && <p className="mt-2">{t.analysisQuality.multiple}</p>}
+                {message.analysisQuality.issues?.includes("user_selected_region") && <p className="mt-2">{t.analysisQuality.region}</p>}
               </>
             )}
           </details>

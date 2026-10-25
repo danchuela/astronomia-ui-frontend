@@ -5,10 +5,45 @@ export interface UploadedImage {
   filename: string;
   data: string;
   hdu_index?: number;
+  psf_hdu_index?: number;
+  error_hdu_index?: number;
+  error_kind?: 'sigma' | 'variance' | 'inverse_variance';
+  source_point?: { x: number; y: number };
+  region?: { left: number; top: number; right: number; bottom: number };
+  uncertainty_samples?: 0 | 16;
+}
+
+export interface ImageInspection {
+  width: number;
+  height: number;
+  preview: string;
+  sha256: string;
+  detection_status?: 'ok' | 'no_detection' | 'resource_limit';
+  sources: { label: number; x: number; y: number; area: number; automatic: boolean }[];
+  hdus: { index: number; name: string; width: number; height: number }[];
+}
+
+export async function inspectUpload(upload: UploadedImage, signal?: AbortSignal): Promise<ImageInspection> {
+  const base = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+  const response = await fetch(`${base}/images/inspect`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, signal,
+    body: JSON.stringify({ ...upload, source_point: undefined, region: undefined, uncertainty_samples: 0 }),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => undefined);
+    throw new Error(body?.detail?.code === 'resource_limit' ? 'resource_limit' : String(response.status));
+  }
+  return response.json();
 }
 
 export function isFits(filename: string): boolean {
   return /\.(fits|fit|fts)$/i.test(filename);
+}
+
+export function withScienceHdu(image: UploadedImage, hdu: number | undefined): UploadedImage {
+  if (image.hdu_index === hdu) return image;
+  return { ...image, hdu_index: hdu, source_point: undefined, region: undefined,
+    psf_hdu_index: undefined, error_hdu_index: undefined, error_kind: undefined, uncertainty_samples: 0 };
 }
 
 export function validateUpload(file: Pick<File, 'name' | 'size'>): 'format' | 'size' | null {

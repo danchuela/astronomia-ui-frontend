@@ -55,6 +55,9 @@ export interface AnalysisQuality {
   issues?: string[];
   input_kind?: "rendered" | "fits";
   source?: "upload" | "viewer";
+  psf?: "not_supplied" | "user_supplied";
+  uncertainty?: "background_only" | "user_sigma";
+  noise_stability?: { status: string; intervals: Record<string, { std: number; p16: number; p84: number; valid_samples: number }> };
 }
 
 // Quick-reply button sent by the BFF (e.g. analyses after "Muéstrame M51").
