@@ -64,6 +64,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
   );
   const activeSurveyRef = useRef(activeSurvey);
   const lastGoodSnapshotRef = useRef<ViewSnapshot | null>(null);
+  const [displayState, setDisplayState] = useState<ViewSnapshot | null>(null);
   useEffect(() => { activeSurveyRef.current = activeSurvey; }, [activeSurvey]);
 
   const target = coordinates
@@ -125,6 +126,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
       if (image_data && sameView(state, readViewerState())) {
         const snapshot = { ...state, image_data };
         lastGoodSnapshotRef.current = snapshot;
+        setDisplayState(current => sameView(current, state) ? current : state);
         return snapshot;
       }
     } catch {
@@ -141,6 +143,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     let cancelled = false;
     let captureTimer: ReturnType<typeof setInterval> | undefined;
     lastGoodSnapshotRef.current = null;
+    setDisplayState(null);
 
     async function init() {
       if (!containerRef.current) return;
@@ -158,6 +161,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
           projection: "SIN",
           showReticle: true,
           showZoomControl: true,
+          showFov: false,
           showLayersControl: false,
           showGotoControl: false,
           showFrame: false,
@@ -226,11 +230,12 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     <div className="mt-3">
       <div className="flex flex-col gap-1 mb-2">
         {SURVEY_GROUPS.map((group) => (
-          <div key={group.band} className="flex items-center gap-1.5">
+          <div key={group.band} className="grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-1.5">
             <span className="text-[10px] text-muted-foreground/60 uppercase tracking-wider w-16 shrink-0 text-right">
               {t.bands[group.band]}
             </span>
-            {group.surveys.map((s) => (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {group.surveys.map((s) => (
               <button
                 key={s.hipsId}
                 onClick={() => handleSurveyChange(s.hipsId)}
@@ -242,7 +247,8 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
               >
                 {s.label}
               </button>
-            ))}
+              ))}
+            </div>
           </div>
         ))}
       </div>
@@ -258,8 +264,14 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         <div ref={containerRef} style={{ width: "100%", height: `${height}px` }} />
       </div>
 
-      <div className="mt-1.5 flex items-center gap-3 text-xs text-muted-foreground">
-        {coordinates ? (
+      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        {displayState ? (
+          <>
+            <span>RA: {displayState.ra_deg.toFixed(4)}</span>
+            <span>Dec: {displayState.dec_deg.toFixed(4)}</span>
+            <span>FoV: {displayState.size_arcmin.toFixed(1)}&apos; x {((displayState.view_metadata?.fov_y_deg ?? 0) * 60).toFixed(1)}&apos;</span>
+          </>
+        ) : coordinates ? (
           <>
             <span>RA: {coordinates.ra_deg.toFixed(4)}</span>
             <span>Dec: {coordinates.dec_deg.toFixed(4)}</span>
