@@ -69,6 +69,7 @@ const UI = {
     ],
     interactiveView: "Vista interactiva",
     loadingViewer: "Cargando visor interactivo...",
+    waitingTitle: "Mientras esperas, ¿sabías que…?",
     dragToResize: "Arrastra para redimensionar",
     // Chat input
     attachImage: "Adjuntar imagen (PNG, JPEG, TIFF o FITS; máximo 8 MiB)",
@@ -240,6 +241,7 @@ const UI = {
     ],
     interactiveView: "Interactive view",
     loadingViewer: "Loading the interactive viewer...",
+    waitingTitle: "While you wait, did you know?",
     dragToResize: "Drag to resize",
     placeholder: "Type a message...",
     send: "Send",
