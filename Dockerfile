@@ -1,13 +1,13 @@
 # Build
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
 RUN npm ci
 
 COPY . .
-# En Windows/Docker a veces localhost falla; 127.0.0.1 suele ser más fiable
-ENV VITE_API_URL=http://127.0.0.1:3000
+ARG VITE_API_URL=https://bff.astronomia-app.com
+ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 # Serve con nginx

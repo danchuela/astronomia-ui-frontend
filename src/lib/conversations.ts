@@ -77,6 +77,7 @@ export function updateMessage(
       | "observationHtml"
       | "requestId"
       | "analysisPlots"
+      | "analysisQuality"
       | "suggestedActions"
     >
   >

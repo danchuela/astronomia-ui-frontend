@@ -36,7 +36,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           placeholder={t.placeholder}
           disabled={disabled}
           rows={1}
-          className="flex-1 min-h-[48px] max-h-32 py-3 px-4 rounded-xl resize-none bg-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+          className="flex-1 min-w-0 min-h-[48px] max-h-32 py-3 px-4 rounded-xl resize-none bg-background border border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         />
         <button
           type="submit"

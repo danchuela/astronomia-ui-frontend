@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useLang } from "@/lib/i18n";
 import type { AladinCoordinates, ViewSnapshot } from "@/types/chat";
+import { reuseCapture, reuseHiddenCapture, sameView } from "@/lib/viewerSnapshot";
 
 const SURVEY_GROUPS = [
   {
@@ -63,6 +64,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
   );
   const activeSurveyRef = useRef(activeSurvey);
   const lastGoodSnapshotRef = useRef<ViewSnapshot | null>(null);
+  const [displayState, setDisplayState] = useState<ViewSnapshot | null>(null);
   useEffect(() => { activeSurveyRef.current = activeSurvey; }, [activeSurvey]);
 
   const target = coordinates
@@ -73,79 +75,75 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
   const readViewerState = useCallback((): Omit<ViewSnapshot, "image_data"> | null => {
     if (!aladinRef.current) return null;
     const [ra, dec] = aladinRef.current.getRaDec();
-    const [fovX] = aladinRef.current.getFov();
+    const [fovX, fovY] = aladinRef.current.getFov();
+    const canvas = containerRef.current?.querySelector<HTMLCanvasElement>(".aladin-imageCanvas");
+    if (!canvas || ![ra, dec, fovX, fovY].every(Number.isFinite) || fovX <= 0 || fovY <= 0) return null;
     return {
       ra_deg: ra,
       dec_deg: dec,
       size_arcmin: fovX * 60,
       hips_id: activeSurveyRef.current,
+      view_metadata: {
+        ra_deg: ra, dec_deg: dec, hips_id: activeSurveyRef.current,
+        fov_x_deg: fovX, fov_y_deg: fovY,
+        width_px: canvas.width, height_px: canvas.height,
+        rotation_deg: aladinRef.current.getRotation(), projection: "SIN",
+      },
     };
   }, []);
 
   const captureCanvasImage = useCallback(async (): Promise<string | undefined> => {
     const container = containerRef.current;
-    const canvas = container?.querySelector("canvas") as HTMLCanvasElement | null;
+    const canvas = container?.querySelector<HTMLCanvasElement>(".aladin-imageCanvas");
     if (!container || !canvas || canvas.width <= 0 || canvas.height <= 0) return undefined;
+    if (aladinRef.current?.getBaseImageLayer()?.id !== activeSurveyRef.current) return undefined;
     if (container.offsetParent === null || canvas.clientWidth <= 0 || canvas.clientHeight <= 0) {
       return undefined;
     }
 
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
 
     if (container.offsetParent === null || canvas.width <= 0 || canvas.height <= 0) {
       return undefined;
     }
+    if (aladinRef.current?.getBaseImageLayer()?.id !== activeSurveyRef.current) return undefined;
 
-    const size = Math.min(canvas.width, canvas.height);
-    if (size <= 0) return undefined;
-
-    const crop = document.createElement("canvas");
-    crop.width = size;
-    crop.height = size;
-    const ctx = crop.getContext("2d");
-    if (!ctx) return canvas.toDataURL("image/jpeg", 0.85);
-
-    ctx.drawImage(
-      canvas,
-      (canvas.width - size) / 2,
-      (canvas.height - size) / 2,
-      size,
-      size,
-      0,
-      0,
-      size,
-      size
-    );
-    return crop.toDataURL("image/jpeg", 0.85);
+    // Capture only the image plane, never reticles, catalogues or viewer controls.
+    // Preserve the entire rectangular field and avoid another lossy JPEG encoding.
+    return canvas.toDataURL("image/png");
   }, []);
 
   const getSnapshot = useCallback(async (): Promise<ViewSnapshot | null> => {
+    if (containerRef.current?.offsetParent === null && aladinRef.current) {
+      const [ra, dec] = aladinRef.current.getRaDec();
+      return reuseHiddenCapture(lastGoodSnapshotRef.current, ra, dec, activeSurveyRef.current, aladinRef.current.getRotation());
+    }
     const state = readViewerState();
     if (!state) return null;
 
     try {
       const image_data = await captureCanvasImage();
-      if (image_data) {
+      if (image_data && sameView(state, readViewerState())) {
         const snapshot = { ...state, image_data };
         lastGoodSnapshotRef.current = snapshot;
+        setDisplayState(current => sameView(current, state) ? current : state);
         return snapshot;
       }
     } catch {
       // Canvas tainted by CORS or temporarily unavailable; fall back below.
     }
 
-    const cached = lastGoodSnapshotRef.current;
-    if (cached?.image_data && cached.hips_id === state.hips_id) {
-      return { ...state, image_data: cached.image_data };
-    }
-
-    return state;
+    const current = readViewerState();
+    return current ? reuseCapture(lastGoodSnapshotRef.current, current)
+      : { ...state, view_metadata: { ...state.view_metadata!, capture_required: true } };
   }, [captureCanvasImage, readViewerState]);
 
   useEffect(() => {
     if (!target) return;
     let cancelled = false;
+    let captureTimer: ReturnType<typeof setInterval> | undefined;
     lastGoodSnapshotRef.current = null;
+    setDisplayState(null);
 
     async function init() {
       if (!containerRef.current) return;
@@ -163,6 +161,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
           projection: "SIN",
           showReticle: true,
           showZoomControl: true,
+          showFov: false,
           showLayersControl: false,
           showGotoControl: false,
           showFrame: false,
@@ -170,6 +169,10 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         });
 
         aladinRef.current = aladin;
+        // Keep a recent coherent capture while visible, also after panning or zooming.
+        captureTimer = setInterval(() => {
+          if (containerRef.current?.offsetParent !== null) void getSnapshot();
+        }, 1000);
         setLoading(false);
         if (onViewerReady) {
           onViewerReady(getSnapshot);
@@ -187,6 +190,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
 
     return () => {
       cancelled = true;
+      clearInterval(captureTimer);
       aladinRef.current = null;
     };
   }, [target, fovDeg, getSnapshot, onViewerReady]);
@@ -226,11 +230,12 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     <div className="mt-3">
       <div className="flex flex-col gap-1 mb-2">
         {SURVEY_GROUPS.map((group) => (
-          <div key={group.band} className="flex items-center gap-1.5">
+          <div key={group.band} className="grid grid-cols-[4rem_minmax(0,1fr)] items-start gap-1.5">
             <span className="text-[10px] text-muted-foreground/60 uppercase tracking-wider w-16 shrink-0 text-right">
               {t.bands[group.band]}
             </span>
-            {group.surveys.map((s) => (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {group.surveys.map((s) => (
               <button
                 key={s.hipsId}
                 onClick={() => handleSurveyChange(s.hipsId)}
@@ -242,7 +247,8 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
               >
                 {s.label}
               </button>
-            ))}
+              ))}
+            </div>
           </div>
         ))}
       </div>
@@ -258,8 +264,14 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         <div ref={containerRef} style={{ width: "100%", height: `${height}px` }} />
       </div>
 
-      <div className="mt-1.5 flex items-center gap-3 text-xs text-muted-foreground">
-        {coordinates ? (
+      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        {displayState ? (
+          <>
+            <span>RA: {displayState.ra_deg.toFixed(4)}</span>
+            <span>Dec: {displayState.dec_deg.toFixed(4)}</span>
+            <span>FoV: {displayState.size_arcmin.toFixed(1)}&apos; x {((displayState.view_metadata?.fov_y_deg ?? 0) * 60).toFixed(1)}&apos;</span>
+          </>
+        ) : coordinates ? (
           <>
             <span>RA: {coordinates.ra_deg.toFixed(4)}</span>
             <span>Dec: {coordinates.dec_deg.toFixed(4)}</span>

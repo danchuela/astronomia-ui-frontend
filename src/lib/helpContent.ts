@@ -147,7 +147,7 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
       {
         term: "Fotometría",
         definition:
-          "Medición de la cantidad de luz que emite el objeto. Te dice cuánto brillo hay en cada zona o anillo de la galaxia.",
+          "Medición de intensidades y flujos en la imagen. En esta aplicación son valores exploratorios de los píxeles, no magnitudes calibradas ni luminosidades físicas.",
       },
       {
         term: "Perfil de brillo",
@@ -167,17 +167,17 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
       {
         term: "A — Asimetría",
         definition:
-          "Cuánto difiere la galaxia de su versión rotada 180°. Valores altos delatan fusiones, brazos torcidos o irregularidades.",
+          "Diferencia respecto a la imagen rotada 180°, con corrección del fondo. Puede reflejar estructura irregular, pero también ruido, contaminación o un mal encuadre; no diagnostica por sí sola una fusión.",
       },
       {
         term: "S — Suavidad",
         definition:
-          'Qué tan "lisa" o granulada se ve la imagen. Galaxias con muchas regiones de formación estelar activa muestran estructura fina (S alto). Las elípticas viejas son más suaves (S bajo).',
+          "Mide estructura de pequeña escala comparando la imagen con una versión suavizada. Depende de la resolución, el ruido y la banda; no demuestra por sí sola formación estelar. La corrección del fondo puede producir valores negativos.",
       },
       {
         term: "Índice de Sérsic (n)",
         definition:
-          'Número que describe la forma del perfil de brillo. n≈1 es típico de galaxias espirales (perfil exponencial); n≈4 es típico de galaxias elípticas (ley de De Vaucouleurs). Es como un "código de barras" del tipo de galaxia.',
+          "Describe la concentración de un modelo de brillo de componente única: n≈1 es exponencial y n≈4 corresponde al perfil de de Vaucouleurs. No es una clasificación automática ni una separación de bulbo y disco.",
       },
       {
         term: "r_half",
@@ -619,7 +619,7 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
       {
         term: "Photometry",
         definition:
-          "Measurement of the amount of light the object emits. It tells you how much brightness there is in each area or ring of the galaxy.",
+          "Measurement of image intensities and fluxes. In this application these are exploratory pixel measurements, not calibrated magnitudes or physical luminosities.",
       },
       {
         term: "Brightness profile",
@@ -639,17 +639,17 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
       {
         term: "A — Asymmetry",
         definition:
-          "How much the galaxy differs from its own image rotated by 180°. High values reveal mergers, twisted arms or irregularities.",
+          "Difference from the image rotated by 180°, with a background correction. It can reflect irregular structure, but also noise, contamination or poor framing; it does not diagnose a merger on its own.",
       },
       {
         term: "S — Smoothness",
         definition:
-          'How "smooth" or grainy the image looks. Galaxies with many active star-forming regions show fine structure (high S). Old ellipticals are smoother (low S).',
+          "Measures small-scale structure by comparing the image with a smoothed version. It depends on resolution, noise and band, and does not by itself establish star formation. Background correction can produce negative values.",
       },
       {
         term: "Sérsic index (n)",
         definition:
-          'Number that describes the shape of the brightness profile. n≈1 is typical of spiral galaxies (exponential profile); n≈4 is typical of elliptical galaxies (de Vaucouleurs law). It is like a "barcode" of the galaxy type.',
+          "Describes the concentration of a single-component light model: n≈1 is exponential and n≈4 is the de Vaucouleurs profile. It is not an automatic classification or a bulge/disk decomposition.",
       },
       {
         term: "r_half",

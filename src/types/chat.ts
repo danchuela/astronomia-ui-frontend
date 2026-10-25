@@ -31,7 +31,28 @@ export interface ViewSnapshot {
   dec_deg: number;
   size_arcmin: number;
   hips_id: string;
-  image_data?: string; // base64 JPEG canvas capture; undefined when CORS prevents it
+  image_data?: string;
+  view_metadata?: ViewCaptureMetadata;
+}
+
+export interface ViewCaptureMetadata {
+  ra_deg: number;
+  dec_deg: number;
+  hips_id: string;
+  fov_x_deg: number;
+  fov_y_deg: number;
+  width_px: number;
+  height_px: number;
+  rotation_deg: number;
+  projection: "SIN";
+  capture_required?: boolean;
+}
+
+export interface AnalysisQuality {
+  status: "exploratory" | "partial" | "unavailable";
+  reason?: string;
+  modules?: Record<string, "ok" | "suspect" | "unavailable" | "missing">;
+  issues?: string[];
 }
 
 // Quick-reply button sent by the BFF (e.g. analyses after "Muéstrame M51").
@@ -46,6 +67,7 @@ export interface Message {
   content: string;
   imageUrl?: string;
   analysisPlots?: string[];   // analysis plot names (cas, radial_profile, etc.)
+  analysisQuality?: AnalysisQuality;
   coordinates?: AladinCoordinates;
   objectInfo?: ObjectInfo;
   hstJwst?: HstJwstInfo;

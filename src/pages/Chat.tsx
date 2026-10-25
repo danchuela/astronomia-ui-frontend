@@ -23,10 +23,16 @@ export default function Chat() {
   const { t } = useLang();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentId, setCurrentId] = useState<string | null>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.matchMedia("(max-width: 767px)").matches);
   const [loading, setLoading] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(true);
   const [viewerHeight, setViewerHeight] = useState(400);
+  useEffect(() => {
+    const narrow = window.matchMedia("(max-width: 767px)");
+    const collapseOnNarrow = () => { if (narrow.matches) setSidebarCollapsed(true); };
+    narrow.addEventListener("change", collapseOnNarrow);
+    return () => narrow.removeEventListener("change", collapseOnNarrow);
+  }, []);
   const dragStartY = useRef<number | null>(null);
   const dragStartH = useRef<number>(400);
 
@@ -157,6 +163,7 @@ export default function Chat() {
           if (event.html_chart) patch.observationHtml = event.html_chart;
           if (Object.keys(patch).length > 0) updateMessage(convId, assistantId, patch);
         } else if (event.type === "end") {
+          if (event.analysis_quality) updateMessage(convId, assistantId, { analysisQuality: event.analysis_quality });
           if (event.summary) updateMessage(convId, assistantId, { content: event.summary });
           if (event.coordinates) updateMessage(convId, assistantId, { coordinates: event.coordinates as AladinCoordinates });
           if (event.object_info) updateMessage(convId, assistantId, { objectInfo: event.object_info as ObjectInfo });
@@ -307,7 +314,7 @@ export default function Chat() {
           </div>
         </div>
 
-        <div className="bg-background/70 backdrop-blur-md p-4">
+        <div className="bg-background/70 backdrop-blur-md p-4 pr-20 sm:pr-4">
           <div className="max-w-3xl mx-auto">
             <ChatInput onSend={handleSend} disabled={loading} />
           </div>
