@@ -78,6 +78,7 @@ export function updateMessage(
       | "requestId"
       | "analysisPlots"
       | "analysisQuality"
+      | "analysisResults"
       | "suggestedActions"
     >
   >

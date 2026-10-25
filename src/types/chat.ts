@@ -74,6 +74,7 @@ export interface Message {
   imageUrl?: string;
   analysisPlots?: string[];   // analysis plot names (cas, radial_profile, etc.)
   analysisQuality?: AnalysisQuality;
+  analysisResults?: Record<string, unknown>;
   coordinates?: AladinCoordinates;
   objectInfo?: ObjectInfo;
   hstJwst?: HstJwstInfo;

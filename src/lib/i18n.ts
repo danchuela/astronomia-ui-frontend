@@ -5,6 +5,7 @@
 // The answers follow the language of each message (decided in the BFF and n8n);
 // this choice is also sent with every message, for ambiguous ones such as "M31".
 import { createContext, useContext } from "react";
+import { STUDY_TEXTS } from './studyTexts';
 
 export type Lang = "es" | "en";
 
@@ -30,6 +31,7 @@ export function getLang(): Lang {
 
 const UI = {
   es: {
+    studies: STUDY_TEXTS.es,
     // Sidebar
     assistant: "Asistente astronómico",
     expand: "Expandir",
@@ -179,6 +181,7 @@ const UI = {
     notConfigured: "La conexión con el servicio no está configurada.",
   },
   en: {
+    studies: STUDY_TEXTS.en,
     attachImage: "Attach image (PNG, JPEG, TIFF or FITS; up to 8 MiB)",
     removeImage: "Remove image",
     analysisFile: "Analysis file",
