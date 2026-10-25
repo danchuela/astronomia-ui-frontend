@@ -4,6 +4,10 @@ const DB_NAME = 'astronomia_studies';
 const STORE = 'studies';
 const MAX_TOTAL_BYTES = 128 * 1024 * 1024;
 
+function notify(id: string, deleted: boolean) {
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('astronomia-studies-changed', { detail: { id, deleted } }));
+}
+
 async function database(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -53,8 +57,10 @@ export async function saveStudy(study: Study): Promise<void> {
       tx.onerror = () => reject(tx.error);
     });
   } finally { db.close(); }
+  notify(study.id, false);
 }
 
 export async function deleteStudy(id: string): Promise<void> {
   await transaction('readwrite', store => store.delete(id));
+  notify(id, true);
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Archive, Check, LoaderCircle } from 'lucide-react';
 import type { Message } from '@/types/chat';
 import type { UploadedImage } from '@/lib/uploads';
@@ -8,6 +8,14 @@ export function SaveStudyButton({ message, prompt, input }: { message: Message; 
   const { t } = useLang();
   const [state, setState] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [error, setError] = useState('');
+  useEffect(() => {
+    const changed = (event: Event) => {
+      const { id, deleted } = (event as CustomEvent<{ id: string; deleted: boolean }>).detail;
+      if (id === message.requestId) setState(deleted ? 'idle' : 'saved');
+    };
+    window.addEventListener('astronomia-studies-changed', changed);
+    return () => window.removeEventListener('astronomia-studies-changed', changed);
+  }, [message.requestId]);
   async function save() {
     setState('saving'); setError('');
     try {
