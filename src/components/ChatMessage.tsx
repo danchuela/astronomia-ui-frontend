@@ -4,6 +4,8 @@ import { sendFeedback } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
 import { WaitingTips } from "@/components/WaitingTips";
 import { FileImage } from "lucide-react";
+import { SaveStudyButton } from './SaveStudyButton';
+import type { UploadedImage } from '@/lib/uploads';
 
 const OBSERVATION_FRAME_MIN_HEIGHT = 420;
 const OBSERVATION_FRAME_HEIGHT_EVENT = "astronomia-observation-frame-height";
@@ -216,11 +218,14 @@ interface ChatMessageProps {
   // message, so older buttons are not shown.
   onAction?: (text: string) => void;
   actionsDisabled?: boolean;
+  studyPrompt?: string;
+  studyInput?: UploadedImage;
+  readOnly?: boolean;
   // The answer is still being computed: show the progress message and rotating facts.
   pending?: boolean;
 }
 
-export function ChatMessage({ message, onAction, actionsDisabled, pending }: ChatMessageProps) {
+export function ChatMessage({ message, onAction, actionsDisabled, pending, studyPrompt, studyInput, readOnly }: ChatMessageProps) {
   const { t } = useLang();
   const isUser = message.role === "user";
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
@@ -361,7 +366,10 @@ export function ChatMessage({ message, onAction, actionsDisabled, pending }: Cha
         )}
         {/* Mini-rating: solo en mensajes del bot que ya tienen request_id
             asignado (se asigna cuando termina el stream). */}
-        {!isUser && message.requestId && (
+        {!isUser && !readOnly && message.analysisResults && message.analysisQuality?.modules && message.requestId && (
+          <SaveStudyButton message={message} prompt={studyPrompt ?? ''} input={studyInput} />
+        )}
+        {!isUser && !readOnly && message.requestId && (
           <MiniRating requestId={message.requestId} />
         )}
       </div>
