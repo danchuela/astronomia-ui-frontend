@@ -14,6 +14,7 @@ import {
 import { serviceUnavailableMessage, sendMessageStream } from "@/lib/api";
 import { useLang } from "@/lib/i18n";
 import type { AladinCoordinates, Conversation, HstJwstInfo, Message, ObjectInfo, ViewSnapshot } from "@/types/chat";
+import type { UploadedImage } from "@/lib/uploads";
 
 const AladinViewer = lazy(() =>
   import("@/components/AladinViewer").then((mod) => ({ default: mod.AladinViewer }))
@@ -25,6 +26,9 @@ export default function Chat() {
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.matchMedia("(max-width: 767px)").matches);
   const [loading, setLoading] = useState(false);
+  // Keep private file bytes in memory, not in the localStorage conversation log.
+  const [uploads, setUploads] = useState<Record<string, UploadedImage | undefined>>({});
+  const attachment = uploads[currentId ?? 'draft'];
   const [viewerOpen, setViewerOpen] = useState(true);
   const [viewerHeight, setViewerHeight] = useState(400);
   useEffect(() => {
@@ -117,6 +121,7 @@ export default function Chat() {
       const conv = createConversation(text.slice(0, 50));
       convId = conv.id;
       setCurrentId(convId);
+      if (attachment) setUploads(images => ({ ...images, [conv.id]: attachment, draft: undefined }));
       refreshConversations();
     }
 
@@ -124,6 +129,7 @@ export default function Chat() {
       id: crypto.randomUUID(),
       role: "user",
       content: text,
+      attachmentName: attachment?.filename,
     };
     appendMessage(convId, userMessage);
     refreshConversations();
@@ -140,9 +146,8 @@ export default function Chat() {
       .map((m) => ({ role: m.role, content: m.content }));
 
     const base = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
-    const viewerSnapshot = viewerGetterRef.current ? (await viewerGetterRef.current() ?? undefined) : undefined;
-
     try {
+      const viewerSnapshot = !attachment && viewerGetterRef.current ? (await viewerGetterRef.current() ?? undefined) : undefined;
       await sendMessageStream(text, convId, history, (event) => {
         if (event.type === "status") {
           updateMessage(convId, assistantId, { content: event.message });
@@ -177,7 +182,7 @@ export default function Chat() {
           updateMessage(convId, assistantId, { content: event.message });
         }
         refreshConversations();
-      }, viewerSnapshot);
+      }, viewerSnapshot, attachment);
     } catch (err) {
       // e.g. the connection drops in the middle of the answer
       console.warn("chat stream failed", err);
@@ -316,7 +321,8 @@ export default function Chat() {
 
         <div className="bg-background/70 backdrop-blur-md p-4 pr-20 sm:pr-4">
           <div className="max-w-3xl mx-auto">
-            <ChatInput onSend={handleSend} disabled={loading} />
+            <ChatInput key={currentId ?? 'draft'} onSend={handleSend} disabled={loading}
+              attachment={attachment} onAttachmentChange={image => setUploads(images => ({ ...images, [currentId ?? 'draft']: image }))} />
           </div>
         </div>
       </div>
