@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useLang } from "@/lib/i18n";
+import { WaitingTips } from "@/components/WaitingTips";
 import type { AladinCoordinates, ViewSnapshot } from "@/types/chat";
 import { reuseCapture, reuseHiddenCapture, sameView } from "@/lib/viewerSnapshot";
 
@@ -255,10 +256,11 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
 
       <div className="relative rounded-lg overflow-hidden border border-border">
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-muted/60 z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/60 z-10 px-4">
             <span className="text-sm text-muted-foreground animate-pulse">
               {t.loadingViewer}
             </span>
+            <WaitingTips compact />
           </div>
         )}
         <div ref={containerRef} style={{ width: "100%", height: `${height}px` }} />
