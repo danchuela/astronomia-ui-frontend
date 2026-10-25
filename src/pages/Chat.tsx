@@ -21,6 +21,7 @@ import type { UploadedImage } from "@/lib/uploads";
 const AladinViewer = lazy(() =>
   import("@/components/AladinViewer").then((mod) => ({ default: mod.AladinViewer }))
 );
+const StudiesDialog = lazy(() => import('@/components/StudiesDialog').then(module => ({ default: module.StudiesDialog })));
 
 export default function Chat() {
   const { t } = useLang();
@@ -28,6 +29,8 @@ export default function Chat() {
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.matchMedia("(max-width: 767px)").matches);
   const [loading, setLoading] = useState(false);
+  const [studiesOpen, setStudiesOpen] = useState(false);
+  const studyInputs = useRef<Record<string, UploadedImage>>({});
   // Keep private file bytes in memory, not in the localStorage conversation log.
   const [uploads, setUploads] = useState<Record<string, UploadedImage | undefined>>({});
   const attachment = uploads[currentId ?? 'draft'];
@@ -142,6 +145,7 @@ export default function Chat() {
     refreshConversations();
 
     const assistantId = crypto.randomUUID();
+    if (attachment) studyInputs.current[assistantId] = attachment;
     const assistantMessage: Message = { id: assistantId, role: "assistant", content: "…" };
     appendMessage(convId, assistantMessage);
     refreshConversations();
@@ -175,6 +179,7 @@ export default function Chat() {
           if (event.html_chart) patch.observationHtml = event.html_chart;
           if (Object.keys(patch).length > 0) updateMessage(convId, assistantId, patch);
         } else if (event.type === "end") {
+          if (event.results && event.analysis_quality?.modules) updateMessage(convId, assistantId, { analysisResults: event.results });
           if (event.analysis_quality) updateMessage(convId, assistantId, { analysisQuality: event.analysis_quality });
           if (event.summary) updateMessage(convId, assistantId, { content: event.summary });
           if (event.coordinates) updateMessage(convId, assistantId, { coordinates: event.coordinates as AladinCoordinates });
@@ -224,6 +229,7 @@ export default function Chat() {
         onNewChat={handleNewChat}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onStudies={() => setStudiesOpen(true)}
       />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -318,6 +324,8 @@ export default function Chat() {
                 <ChatMessage
                   key={msg.id}
                   message={msg}
+                  studyPrompt={messages.slice(0, i).reverse().find(previous => previous.role === 'user')?.content}
+                  studyInput={studyInputs.current[msg.id]}
                   onAction={i === messages.length - 1 ? handleSend : undefined}
                   actionsDisabled={loading || !!missingAttachment}
                   pending={loading && i === messages.length - 1 && msg.role === "assistant"}
@@ -343,6 +351,7 @@ export default function Chat() {
           accesibles desde cualquier punto del chat. */}
       <FeedbackButton latestRequestId={latestAssistantRequestId} />
       <HelpButton />
+      {studiesOpen && <Suspense fallback={null}><StudiesDialog onClose={() => setStudiesOpen(false)} /></Suspense>}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { Conversation } from "@/types/chat";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { useLang, type Lang } from "@/lib/i18n";
+import { Archive } from 'lucide-react';
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -11,6 +12,7 @@ interface SidebarProps {
   onNewChat: () => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
+  onStudies: () => void;
 }
 
 function formatTime(ts: number, lang: Lang) {
@@ -31,6 +33,7 @@ export function Sidebar({
   onNewChat,
   collapsed,
   onToggleCollapse,
+  onStudies,
 }: SidebarProps) {
   const { email } = useAuth();
   const navigate = useNavigate();
@@ -71,6 +74,7 @@ export function Sidebar({
           </button>
         </div>
         <div className="flex-1 overflow-y-auto scrollbar-thin py-2">
+          <button type="button" onClick={onStudies} title={t.studies.title} aria-label={t.studies.title} className="mb-2 w-full rounded-md p-3 hover:bg-sidebar-accent/50"><Archive className="mx-auto h-5 w-5" /></button>
           {conversations.slice(0, 8).map((c) => (
             <button
               key={c.id}
@@ -135,6 +139,7 @@ export function Sidebar({
       </button>
 
       <div className="flex-1 overflow-y-auto px-3 pb-4">
+        <button type="button" onClick={onStudies} className="mb-4 flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-sidebar-accent/50"><Archive className="h-4 w-4" />{t.studies.title}</button>
         <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-1 mb-2">
           {t.conversations}
         </h3>
