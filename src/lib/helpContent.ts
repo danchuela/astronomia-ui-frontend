@@ -63,6 +63,17 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
           "Algunas respuestas tardan unos segundos: se consultan catálogos, se descargan imágenes de los surveys o se calculan efemérides y el clima. Mientras tanto verás el paso que se está haciendo (por ejemplo, \"Resolviendo objetivo…\") y, debajo, una curiosidad del universo que cambia cada pocos segundos. También aparecen mientras se carga el visor interactivo.",
       },
       {
+        term: "Analizar tus propias imágenes (PNG, JPEG, TIFF o FITS)",
+        definition:
+          "Con el clip junto al cuadro de texto (o arrastrando el archivo) adjuntas una imagen tuya de hasta 8 MiB. Si la envías sin escribir nada, se pide la morfología completa de la imagen; también puedes escribir el análisis que quieras. Con un FITS se usan los píxeles originales, y puedes indicar qué HDU analizar (vacío: selección automática). El archivo no se guarda en tu navegador: si recargas la página o vuelves a esa conversación más tarde, verás \"Archivo no adjunto\" y tendrás que adjuntarlo de nuevo.",
+        example: "Ejemplo: adjunta m51.fits y escribe \"Calcula el perfil de brillo\".",
+      },
+      {
+        term: "Preparar imagen",
+        definition:
+          "El botón de ajustes junto al archivo adjunto abre una vista previa con las fuentes detectadas. Puedes elegir la fuente con un clic o delimitar una región para que el análisis se haga solo ahí. En un FITS también puedes indicar el HDU de ciencia, el de la PSF (con la misma escala de píxel) y el del mapa de error (σ, σ² o 1/σ²), y pedir la estabilidad frente al ruido: se repite el análisis 16 veces con ruido añadido (imágenes de hasta 512 × 512 píxeles).",
+      },
+      {
         term: "Botones de análisis",
         definition:
           'Cuando pides ver un objeto (por ejemplo "Muéstrame M51"), astronomIA lo abre en el visor y te ofrece botones con los análisis disponibles: morfología completa, segmentación e isofotas, fotometría básica y perfil de brillo. Ajusta antes el encuadre, el zoom y la banda en el visor, y haz clic en el análisis que quieras. También puedes seguir escribiendo para pedir algo más específico.',
@@ -91,7 +102,7 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
       {
         term: "Qué datos guardamos",
         definition:
-          "El texto de tus consultas y lo que el sistema entendió (objeto, lugar y fecha), si la respuesta funcionó y cuánto tardó, el tipo de navegador, el idioma de la respuesta, y las valoraciones o comentarios que envíes. El correo con el que entras y tu historial de chats no se guardan en el servidor: se quedan en tu navegador.",
+          "El texto de tus consultas y lo que el sistema entendió (objeto, lugar y fecha), si la respuesta funcionó y cuánto tardó, el tipo de navegador, el idioma de la respuesta, y las valoraciones o comentarios que envíes. Si adjuntas una imagen, el archivo y los resultados de su análisis se guardan en el servidor para poder mostrarte los gráficos. El correo con el que entras y tu historial de chats no se guardan en el servidor: se quedan en tu navegador.",
       },
       {
         term: "Para qué los usamos",
@@ -203,6 +214,31 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
         term: "Sy2 (Seyfert tipo 2)",
         definition:
           "Tipo de AGN cuyas líneas espectrales anchas están ocultas por polvo. M51 es un ejemplo clásico.",
+      },
+      {
+        term: "Calidad del análisis",
+        definition:
+          "Debajo de cada análisis hay un desplegable con su calidad (Exploratorio, Parcial o No disponible) y el estado de cada módulo: Calculado, Dudoso, Sin resultado válido o No ejecutado. Avisa si la fuente toca el borde de la imagen, si hay varias fuentes o si alguna medida tiene indicadores desfavorables. Las capturas del visor son imágenes procesadas para verse bien, sin calibración fotométrica: sus medidas son exploratorias. Con un FITS propio se usan los píxeles originales.",
+      },
+      {
+        term: "FITS",
+        definition:
+          "Formato estándar de la astronomía. A diferencia de un JPEG, guarda los valores reales medidos en cada píxel y, en la cabecera, información del telescopio y de la observación. Es el formato que usan los observatorios y muchos astrónomos aficionados.",
+      },
+      {
+        term: "HDU",
+        definition:
+          "Cada bloque de datos dentro de un archivo FITS. Un mismo FITS puede tener varios: la imagen de ciencia, la PSF, un mapa de error, etc. El primero es el número 0.",
+      },
+      {
+        term: "PSF (función de dispersión de un punto)",
+        definition:
+          "Cómo el telescopio y la atmósfera esparcen la luz de una fuente puntual, como una estrella. Si aportas la PSF, el ajuste de Sérsic tiene en cuenta ese emborronado.",
+      },
+      {
+        term: "Mapa de error (σ)",
+        definition:
+          "Imagen que indica la incertidumbre de cada píxel. Puede venir como desviación estándar (σ), varianza (σ²) o varianza inversa (1/σ²); astronomIA la convierte a σ por píxel.",
       },
     ],
   },
@@ -542,6 +578,17 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
           "Some answers take a few seconds: catalogues are queried, survey images are downloaded or ephemerides and weather are computed. Meanwhile you will see the step in progress (for example, \"Resolving target…\") and, below it, a fact about the universe that changes every few seconds. They also appear while the interactive viewer loads.",
       },
       {
+        term: "Analysing your own images (PNG, JPEG, TIFF or FITS)",
+        definition:
+          "With the paperclip next to the text box (or by dragging the file) you attach your own image, up to 8 MiB. If you send it without typing anything, the full morphology of the image is requested; you can also type the analysis you want. With a FITS file the original pixels are used, and you can choose which HDU to analyse (blank: automatic selection). The file is not kept in your browser: if you reload the page or come back to that conversation later, you will see \"File not attached\" and need to attach it again.",
+        example: "Example: attach m51.fits and type \"Compute the brightness profile\".",
+      },
+      {
+        term: "Prepare image",
+        definition:
+          "The settings button next to the attached file opens a preview with the detected sources. You can pick the source with a click or draw a region so that only that part is analysed. With a FITS file you can also choose the science HDU, the PSF HDU (same pixel scale) and the error-map HDU (σ, σ² or 1/σ²), and ask for the noise stability: the analysis is repeated 16 times with added noise (images up to 512 × 512 pixels).",
+      },
+      {
         term: "Analysis buttons",
         definition:
           'When you ask to see an object (for example "Show me M51"), astronomIA opens it in the viewer and offers buttons with the available analyses: full morphology, segmentation and isophotes, basic photometry and brightness profile. First adjust the framing, zoom and band in the viewer, then click the analysis you want. You can also keep typing to ask for something more specific.',
@@ -569,7 +616,7 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
       {
         term: "What data we store",
         definition:
-          "The text of your requests and what the system understood (object, place and date), whether the answer worked and how long it took, the type of browser, the language of the answer, and any ratings or comments you send. The email you sign in with and your chat history are not stored on the server: they stay in your browser.",
+          "The text of your requests and what the system understood (object, place and date), whether the answer worked and how long it took, the type of browser, the language of the answer, and any ratings or comments you send. If you attach an image, the file and its analysis results are stored on the server so the plots can be shown. The email you sign in with and your chat history are not stored on the server: they stay in your browser.",
       },
       {
         term: "What we use it for",
@@ -679,6 +726,31 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
       {
         term: "Sy2 (Seyfert type 2)",
         definition: "Type of AGN whose broad spectral lines are hidden by dust. M51 is a classic example.",
+      },
+      {
+        term: "Analysis quality",
+        definition:
+          "Below each analysis there is a drop-down with its quality (Exploratory, Partial or Unavailable) and the state of each module: Computed, Suspect, No valid result or Not executed. It warns if the source touches the image border, if there are several sources or if a measurement has unfavourable quality flags. Viewer captures are images processed for display, without photometric calibration: their measurements are exploratory. With your own FITS file the original pixels are used.",
+      },
+      {
+        term: "FITS",
+        definition:
+          "The standard file format in astronomy. Unlike a JPEG, it stores the real values measured in each pixel and, in its header, information about the telescope and the observation. Observatories and many amateur astronomers use it.",
+      },
+      {
+        term: "HDU",
+        definition:
+          "Each block of data inside a FITS file. One FITS file can hold several: the science image, the PSF, an error map, etc. The first one is number 0.",
+      },
+      {
+        term: "PSF (point spread function)",
+        definition:
+          "How the telescope and the atmosphere spread the light of a point source, such as a star. If you supply the PSF, the Sérsic fit takes that blurring into account.",
+      },
+      {
+        term: "Error map (σ)",
+        definition:
+          "An image giving the uncertainty of each pixel. It can come as standard deviation (σ), variance (σ²) or inverse variance (1/σ²); astronomIA converts it to σ per pixel.",
       },
     ],
   },
