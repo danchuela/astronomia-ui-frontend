@@ -1,6 +1,6 @@
 declare module "aladin-lite" {
   interface AladinOptions {
-    survey?: string;
+    survey?: string | string[];
     fov?: number;
     target?: string;
     projection?: string;
@@ -13,15 +13,34 @@ declare module "aladin-lite" {
     cooFrame?: string;
   }
 
-  interface AladinInstance {
-    gotoRaDec(ra: number, dec: number): void;
-    setFoV(fovDeg: number): void;
-    setBaseImageLayer(hipsIdOrUrl: string): void;
+  export interface AladinImageLayer {
+    id: string;
+    query: Promise<unknown>;
+    readPixel(x: number, y: number): number[] | null;
   }
 
-  interface AladinStatic {
+  export interface AladinInstance {
+    gotoRaDec(ra: number, dec: number): void;
+    setFoV(fovDeg: number): void;
+    setBaseImageLayer(layer: string | AladinImageLayer): void;
+    removeImageLayer(layer: string): void;
+    getBaseImageLayer(): AladinImageLayer | undefined;
+    getRaDec(): [number, number];
+    getFov(): [number, number];
+    getRotation(): number;
+    wasm: {
+      getNOrder(): number;
+      getVisibleCells(order: number): { ipix: number }[];
+      isRendering(): boolean;
+    };
+  }
+
+  export interface AladinStatic {
     init: Promise<void>;
     aladin(element: HTMLElement, options?: AladinOptions): AladinInstance;
+    HiPS(id: string, options: {
+      name: string; url: string; creatorDid: string; imgFormat: 'jpeg' | 'png';
+    }): AladinImageLayer;
   }
 
   const A: AladinStatic;

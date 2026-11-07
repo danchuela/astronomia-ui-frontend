@@ -46,6 +46,9 @@ export interface ViewCaptureMetadata {
   rotation_deg: number;
   projection: "SIN";
   capture_required?: boolean;
+  hips_service_url?: string;
+  hips_release_date?: string;
+  hips_revision?: string;
 }
 
 export interface AnalysisQuality {

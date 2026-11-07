@@ -49,3 +49,13 @@ test("hidden layout changes preserve the last selected field without relabeling 
   assert.equal(reuseHiddenCapture(cached, 211, 54, "SDSS", 0)?.image_data, undefined);
   assert.equal(reuseHiddenCapture(cached, 210, 54, "DSS2", 0)?.image_data, undefined);
 });
+
+test('a new survey release or source cannot reuse pixels from an earlier capture', () => {
+  const cached = capture();
+  cached.view_metadata!.hips_revision = 'old';
+  for (const changed of [{ hips_revision: 'new' }, { hips_service_url: 'https://new.example/hips' }]) {
+    const current = { ...cached, image_data: undefined, view_metadata: { ...cached.view_metadata!, ...changed } };
+    assert.equal(reuseCapture(cached, current).image_data, undefined);
+    assert.equal(reuseCapture(cached, current).view_metadata?.capture_required, true);
+  }
+});
