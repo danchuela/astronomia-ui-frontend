@@ -230,6 +230,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
         if (cancelled || !containerRef.current) return;
 
         const aladin = A.aladin(containerRef.current, {
+          log: false,
           survey: [],
           fov: fovDeg,
           target,
