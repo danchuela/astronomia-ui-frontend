@@ -10,6 +10,7 @@ export function sameView(a: ViewSnapshot | null, b: ViewSnapshot | null): boolea
     && Math.abs(am.fov_y_deg - bm.fov_y_deg) < 1e-7
     && Math.abs(am.rotation_deg - bm.rotation_deg) < 1e-7
     && am.width_px === bm.width_px && am.height_px === bm.height_px
+    && am.hips_revision === bm.hips_revision && am.hips_service_url === bm.hips_service_url
     && am.projection === bm.projection;
 }
 
