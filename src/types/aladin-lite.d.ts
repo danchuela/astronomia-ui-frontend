@@ -1,5 +1,6 @@
 declare module "aladin-lite" {
   interface AladinOptions {
+    log?: boolean;
     survey?: string | string[];
     fov?: number;
     target?: string;
