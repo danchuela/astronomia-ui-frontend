@@ -112,7 +112,7 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
       {
         term: "Servicios externos",
         definition:
-          "Para responder, el texto de tu consulta se envía a OpenAI. Los nombres de objetos, lugares y coordenadas se consultan en servicios científicos y meteorológicos: SIMBAD (CDS), JPL Horizons, SDSS, SkyView, MAST y Open-Meteo. No escribas datos personales en tus consultas.",
+          "Para responder, el texto de tu consulta se envía a OpenAI. Los nombres de objetos, lugares y coordenadas se consultan en servicios científicos y meteorológicos: SIMBAD (CDS) y sus espejos de Harvard y Sudáfrica, NED, JPL Horizons, SDSS, SkyView, IRSA, MAST y Open-Meteo. Muchos objetos se resuelven con el catálogo propio de astronomIA, sin salir a internet. No escribas datos personales en tus consultas.",
       },
       {
         term: "Correo de contacto (opcional)",
@@ -504,7 +504,7 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
       {
         term: "SIMBAD",
         definition:
-          "Base de datos astronómica del CDS (Centre de Données astronomiques de Strasbourg). Centraliza identificadores, posiciones, magnitudes y otras propiedades básicas de millones de objetos. astronomIA la usa para resolver nombres.",
+          "Base de datos astronómica del CDS (Centre de Données astronomiques de Strasbourg). Centraliza identificadores, posiciones, magnitudes y otras propiedades básicas de millones de objetos. astronomIA la consulta, o sus espejos de Harvard y Sudáfrica, cuando un objeto no está en su catálogo propio.",
       },
       {
         term: "SDSS (Sloan Digital Sky Survey)",
@@ -530,6 +530,22 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
         term: "JPL Horizons",
         definition:
           "Servicio del Jet Propulsion Lab (NASA) que provee efemérides ultraprecisas de cuerpos del sistema solar (planetas, lunas, cometas, asteroides). astronomIA lo consulta para planificar observaciones de planetas.",
+      },
+      {
+        term: "Catálogo propio de astronomIA",
+        definition:
+          "Para no depender de servicios externos, astronomIA guarda en su propia base de datos unos 22.400 objetos: todos los NGC, IC y Messier (catálogo OpenNGC) y las estrellas con nombre propio o visibles a simple vista (catálogo HYG), con sus nombres en español y en inglés. La mayoría de las planificaciones se resuelven aquí, al instante y sin consultar internet.",
+        example: "Ejemplo: \"Galaxia de Andrómeda\", \"M31\" y \"NGC 224\" llevan al mismo objeto.",
+      },
+      {
+        term: "Si un catálogo externo no responde",
+        definition:
+          "Si un objeto no está en el catálogo propio, se pregunta en orden a Sesame (CDS), a los espejos de SIMBAD en Harvard y en Sudáfrica (IDIA) y a NED (NASA). Lo que se encuentra se guarda, así que sigue funcionando aunque esos servicios fallen más adelante. Pasó de verdad: a finales de octubre de 2026 el CDS de Estrasburgo quedó fuera de servicio por un incidente de ciberseguridad.",
+      },
+      {
+        term: "Créditos de los datos",
+        definition:
+          "El catálogo OpenNGC, de Mattia Verga (github.com/mattiaverga/OpenNGC), y la base de datos HYG v4.1, de astronexus (github.com/astronexus/HYG-Database), se usan bajo la licencia CC BY-SA 4.0. astronomIA también usa SIMBAD y Sesame (CDS, Estrasburgo), NED (NASA/IPAC), JPL Horizons (NASA), Open-Meteo y los surveys servidos por el CDS, IRSA y MAST.",
       },
     ],
   },
@@ -626,7 +642,7 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
       {
         term: "External services",
         definition:
-          "To answer, the text of your request is sent to OpenAI. Object names, places and coordinates are looked up in scientific and weather services: SIMBAD (CDS), JPL Horizons, SDSS, SkyView, MAST and Open-Meteo. Do not write personal data in your requests.",
+          "To answer, the text of your request is sent to OpenAI. Object names, places and coordinates are looked up in scientific and weather services: SIMBAD (CDS) and its Harvard and South African mirrors, NED, JPL Horizons, SDSS, SkyView, IRSA, MAST and Open-Meteo. Many objects are resolved with astronomIA's own catalogue, without going online. Do not write personal data in your requests.",
       },
       {
         term: "Contact email (optional)",
@@ -1011,7 +1027,7 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
       {
         term: "SIMBAD",
         definition:
-          "Astronomical database of the CDS (Centre de Données astronomiques de Strasbourg). It gathers identifiers, positions, magnitudes and other basic properties of millions of objects. astronomIA uses it to resolve names.",
+          "Astronomical database of the CDS (Centre de Données astronomiques de Strasbourg). It gathers identifiers, positions, magnitudes and other basic properties of millions of objects. astronomIA asks it, or its Harvard and South African mirrors, when an object is not in its own catalogue.",
       },
       {
         term: "SDSS (Sloan Digital Sky Survey)",
@@ -1037,6 +1053,22 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
         term: "JPL Horizons",
         definition:
           "Service of the Jet Propulsion Laboratory (NASA) that provides very precise ephemerides of Solar System bodies (planets, moons, comets, asteroids). astronomIA uses it to plan observations of planets.",
+      },
+      {
+        term: "astronomIA's own catalogue",
+        definition:
+          "So as not to depend on external services, astronomIA keeps about 22,400 objects in its own database: all NGC, IC and Messier objects (OpenNGC catalogue) and the stars with a proper name or visible to the naked eye (HYG catalogue), with their Spanish and English names. Most observation plans are resolved here, instantly and without going online.",
+        example: "Example: \"Andromeda Galaxy\", \"M31\" and \"NGC 224\" lead to the same object.",
+      },
+      {
+        term: "If an external catalogue does not respond",
+        definition:
+          "If an object is not in the own catalogue, Sesame (CDS), the SIMBAD mirrors at Harvard and in South Africa (IDIA) and NED (NASA) are asked in that order. Whatever is found is stored, so it keeps working even if those services fail later. It really happened: at the end of October 2026 the CDS in Strasbourg went offline after a cybersecurity incident.",
+      },
+      {
+        term: "Data credits",
+        definition:
+          "The OpenNGC catalogue, by Mattia Verga (github.com/mattiaverga/OpenNGC), and the HYG database v4.1, by astronexus (github.com/astronexus/HYG-Database), are used under the CC BY-SA 4.0 license. astronomIA also uses SIMBAD and Sesame (CDS, Strasbourg), NED (NASA/IPAC), JPL Horizons (NASA), Open-Meteo and the surveys served by the CDS, IRSA and MAST.",
       },
     ],
   },
