@@ -260,13 +260,16 @@ export default function Chat() {
                 </div>
               }
             >
-              {/* Hide with CSS; never unmount. Aladin is a singleton and losing
-                  the DOM resets zoom, survey, and framing. */}
-              <div style={{ display: viewerOpen ? "block" : "none" }} className="px-4 pb-1">
+              {/* Keep the renderer dimensions when collapsed; a zero-size canvas
+                  changes Aladin's field and starts unrelated all-sky downloads. */}
+              <div aria-hidden={!viewerOpen} style={{ height: viewerOpen ? undefined : 0,
+                overflow: 'hidden', visibility: viewerOpen ? 'visible' : 'hidden' }}
+                className={`px-4 ${viewerOpen ? 'pb-1' : ''}`}>
                 <AladinViewer
                   coordinates={activeViewerCoords}
                   onViewerReady={handleViewerReady}
                   height={viewerHeight}
+                  visible={viewerOpen}
                 />
                 {/* Resize handle */}
                 <div
