@@ -11,15 +11,16 @@ const SURVEY_GROUPS = [
   {
     band: "xray",
     surveys: [
-      { label: "XMM", hipsId: "xcatdb/P/XMM/PN/color" },
+      { label: "XMM", hipsId: "ESDC/P/XMM/EPIC-RGB" },
       { label: "RASS", hipsId: "CDS/P/RASS" },
+      { label: "eROSITA", hipsId: "erosita/dr1/rate/rgb" },
     ],
   },
   {
     band: "uv",
     surveys: [
-      { label: "GALEX FUV", hipsId: "CDS/P/GALEXGR6_7/FUV" },
-      { label: "GALEX NUV", hipsId: "CDS/P/GALEXGR6_7/NUV" },
+      { label: "GALEX FUV", hipsId: "CDS/P/GALEXGR6/AIS/FUV" },
+      { label: "GALEX NUV", hipsId: "CDS/P/GALEXGR6/AIS/NUV" },
     ],
   },
   {
