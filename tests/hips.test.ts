@@ -48,6 +48,25 @@ test('no coverage is distinct from a network failure', () => {
   tracker.dispose();
 });
 
+test('tiles Aladin never requested (outside the coverage map) are probed: 404 means no coverage', async () => {
+  const asked: string[] = [];
+  const tracker = new HipsTileTracker(root, async url => { asked.push(url); return { status: 404, length: 0 }; });
+  tracker.probeMissing(urls);
+  tracker.probeMissing(urls);
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.deepEqual(asked, urls);
+  assert.equal(tracker.state(urls), 'no_coverage');
+  tracker.dispose();
+});
+
+test('a probe never marks a field ready or failed: only Aladin downloads do', async () => {
+  const tracker = new HipsTileTracker(root, async url => ({ status: url === urls[0] ? 200 : 503, length: 9 }));
+  tracker.probeMissing(urls);
+  await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(tracker.state(urls), 'loading');
+  tracker.dispose();
+});
+
 test('different revisions and surveys cannot satisfy readiness', () => {
   const tracker = new HipsTileTracker(root);
   for (const url of urls) tracker.observe({ name: url.replace('a'.repeat(20), 'b'.repeat(20)), responseStatus: 200 });

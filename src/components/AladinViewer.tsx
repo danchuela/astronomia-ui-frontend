@@ -117,6 +117,14 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     } catch { return 'loading'; }
   }, []);
 
+  const probeMissingTiles = useCallback(() => {
+    const viewer = aladinRef.current, metadata = metadataRef.current;
+    if (!viewer || !metadata || viewer.getBaseImageLayer()?.id !== activeSurveyRef.current) return;
+    try {
+      trackerRef.current?.probeMissing(visibleTileUrls(viewer.wasm, metadata, sourceRootRef.current));
+    } catch { /* the engine is not ready yet */ }
+  }, []);
+
   const imageReady = useCallback(() => loadState() === 'ready'
     && !aladinRef.current?.wasm.isRendering(), [loadState]);
 
@@ -268,6 +276,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
             if (Date.now() - lastCapture > 1000) { lastCapture = Date.now(); void getSnapshot(); }
           } else {
             setLoading(true);
+            if (Date.now() - waitingSince > 4000) probeMissingTiles();
           }
         }, 250);
         if (onViewerReady) {
@@ -296,7 +305,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
       sourceRootRef.current = '';
       aladinRef.current = null;
     };
-  }, [target, fovDeg, getSnapshot, imageReady, loadState, loadSurvey, onViewerReady, readViewerState]);
+  }, [target, fovDeg, getSnapshot, imageReady, loadState, loadSurvey, onViewerReady, probeMissingTiles, readViewerState]);
 
   const handleSurveyChange = useCallback((hipsId: string) => {
     activeSurveyRef.current = hipsId;

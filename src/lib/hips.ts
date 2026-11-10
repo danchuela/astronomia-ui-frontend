@@ -115,5 +115,18 @@ export class HipsTileTracker {
     return statuses.some(s => s === 200) ? 'ready' : 'no_coverage';
   }
 
+  // Aladin does not request tiles outside a survey's coverage map (MOC), so a field
+  // with no coverage would wait forever. Ask the BFF about the tiles nobody requested:
+  // only a 404 is recorded; anything else keeps waiting for Aladin's own download.
+  probeMissing(urls: string[]): void {
+    for (const url of urls) {
+      if (this.controller.signal.aborted || this.statuses.has(url) || this.verifying.has(url)) continue;
+      this.verifying.add(url);
+      void this.verify(url, this.controller.signal).then(result => {
+        if (result.status === 404 && !this.statuses.has(url)) this.record(url, 404);
+      }).catch(() => undefined).finally(() => this.verifying.delete(url));
+    }
+  }
+
   dispose(): void { this.controller.abort(); this.statuses.clear(); }
 }
