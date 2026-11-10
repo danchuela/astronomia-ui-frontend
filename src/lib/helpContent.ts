@@ -548,9 +548,15 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
           "Normalmente se analiza lo que ves en el visor. Si el visor no puede enviar su imagen, se pide la misma zona del cielo al servicio de recortes del CDS (hips2fits). Si ese servicio no responde, se descarga la misma zona y en la misma banda desde otro archivo: SDSS, DSS2 (STScI), GALEX (MAST) o 2MASS (IRSA). Nunca se cambia de banda: para WISE, rayos X o radio no hay alternativa y verás un aviso. El informe dice qué survey se usó de verdad.",
       },
       {
+        term: "Rayos X y ultravioleta en el visor",
+        definition:
+          "Como el CDS de Estrasburgo dejó de estar disponible, estos surveys se cargan desde otros archivos: GALEX FUV y NUV (GR6 AIS) desde IRSA (NASA), XMM (EPIC, color) desde la ESA y eROSITA (DR1, color) desde el Instituto Max Planck (MPE). eROSITA es el sucesor de ROSAT y tiene más detalle, pero solo cubre la mitad del cielo: fuera de esa mitad verás un aviso de que no hay cobertura. RASS sigue dependiendo del CDS y volverá cuando el CDS vuelva.",
+        example: "Ejemplo: muestra M51, pulsa GALEX NUV y luego XMM para comparar la galaxia en ultravioleta y en rayos X.",
+      },
+      {
         term: "Créditos de los datos",
         definition:
-          "El catálogo OpenNGC, de Mattia Verga (github.com/mattiaverga/OpenNGC), y la base de datos HYG v4.1, de astronexus (github.com/astronexus/HYG-Database), se usan bajo la licencia CC BY-SA 4.0. astronomIA también usa SIMBAD y Sesame (CDS, Estrasburgo), NED (NASA/IPAC), JPL Horizons (NASA), Open-Meteo y los surveys servidos por el CDS, IRSA y MAST.",
+          "El catálogo OpenNGC, de Mattia Verga (github.com/mattiaverga/OpenNGC), y la base de datos HYG v4.1, de astronexus (github.com/astronexus/HYG-Database), se usan bajo la licencia CC BY-SA 4.0. astronomIA también usa SIMBAD y Sesame (CDS, Estrasburgo), NED (NASA/IPAC), JPL Horizons (NASA), Open-Meteo y los surveys servidos por el CDS, IRSA, MAST, la ESA (ESDC) y el MPE (eROSITA).",
       },
     ],
   },
@@ -1076,9 +1082,15 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
           "Normally what you see in the viewer is analysed. If the viewer cannot send its image, the same field is requested from the CDS cutout service (hips2fits). If that service does not respond, the same field in the same band is downloaded from another archive: SDSS, DSS2 (STScI), GALEX (MAST) or 2MASS (IRSA). The band is never changed: for WISE, X-rays or radio there is no alternative and you will see a notice. The report says which survey was actually used.",
       },
       {
+        term: "X-rays and ultraviolet in the viewer",
+        definition:
+          "Since the CDS in Strasbourg became unavailable, these surveys are loaded from other archives: GALEX FUV and NUV (GR6 AIS) from IRSA (NASA), XMM (EPIC, colour) from ESA and eROSITA (DR1, colour) from the Max Planck Institute (MPE). eROSITA is the successor of ROSAT and shows more detail, but it only covers half of the sky: outside that half you will see a no-coverage notice. RASS still depends on the CDS and will come back when the CDS does.",
+        example: "Example: show M51, press GALEX NUV and then XMM to compare the galaxy in ultraviolet and in X-rays.",
+      },
+      {
         term: "Data credits",
         definition:
-          "The OpenNGC catalogue, by Mattia Verga (github.com/mattiaverga/OpenNGC), and the HYG database v4.1, by astronexus (github.com/astronexus/HYG-Database), are used under the CC BY-SA 4.0 license. astronomIA also uses SIMBAD and Sesame (CDS, Strasbourg), NED (NASA/IPAC), JPL Horizons (NASA), Open-Meteo and the surveys served by the CDS, IRSA and MAST.",
+          "The OpenNGC catalogue, by Mattia Verga (github.com/mattiaverga/OpenNGC), and the HYG database v4.1, by astronexus (github.com/astronexus/HYG-Database), are used under the CC BY-SA 4.0 license. astronomIA also uses SIMBAD and Sesame (CDS, Strasbourg), NED (NASA/IPAC), JPL Horizons (NASA), Open-Meteo and the surveys served by the CDS, IRSA, MAST, ESA (ESDC) and MPE (eROSITA).",
       },
     ],
   },

@@ -11,15 +11,16 @@ const SURVEY_GROUPS = [
   {
     band: "xray",
     surveys: [
-      { label: "XMM", hipsId: "xcatdb/P/XMM/PN/color" },
+      { label: "XMM", hipsId: "ESDC/P/XMM/EPIC-RGB" },
       { label: "RASS", hipsId: "CDS/P/RASS" },
+      { label: "eROSITA", hipsId: "erosita/dr1/rate/rgb" },
     ],
   },
   {
     band: "uv",
     surveys: [
-      { label: "GALEX FUV", hipsId: "CDS/P/GALEXGR6_7/FUV" },
-      { label: "GALEX NUV", hipsId: "CDS/P/GALEXGR6_7/NUV" },
+      { label: "GALEX FUV", hipsId: "CDS/P/GALEXGR6/AIS/FUV" },
+      { label: "GALEX NUV", hipsId: "CDS/P/GALEXGR6/AIS/NUV" },
     ],
   },
   {
@@ -114,6 +115,14 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
     try {
       return trackerRef.current?.state(visibleTileUrls(viewer.wasm, metadata, sourceRootRef.current)) ?? 'loading';
     } catch { return 'loading'; }
+  }, []);
+
+  const probeMissingTiles = useCallback(() => {
+    const viewer = aladinRef.current, metadata = metadataRef.current;
+    if (!viewer || !metadata || viewer.getBaseImageLayer()?.id !== activeSurveyRef.current) return;
+    try {
+      trackerRef.current?.probeMissing(visibleTileUrls(viewer.wasm, metadata, sourceRootRef.current));
+    } catch { /* the engine is not ready yet */ }
   }, []);
 
   const imageReady = useCallback(() => loadState() === 'ready'
@@ -267,6 +276,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
             if (Date.now() - lastCapture > 1000) { lastCapture = Date.now(); void getSnapshot(); }
           } else {
             setLoading(true);
+            if (Date.now() - waitingSince > 4000) probeMissingTiles();
           }
         }, 250);
         if (onViewerReady) {
@@ -295,7 +305,7 @@ export function AladinViewer({ coordinates, objectName, onViewerReady, height = 
       sourceRootRef.current = '';
       aladinRef.current = null;
     };
-  }, [target, fovDeg, getSnapshot, imageReady, loadState, loadSurvey, onViewerReady, readViewerState]);
+  }, [target, fovDeg, getSnapshot, imageReady, loadState, loadSurvey, onViewerReady, probeMissingTiles, readViewerState]);
 
   const handleSurveyChange = useCallback((hipsId: string) => {
     activeSurveyRef.current = hipsId;
