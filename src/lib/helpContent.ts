@@ -543,6 +543,11 @@ export const HELP_CONTENT_ES: HelpCategory[] = [
           "Si un objeto no está en el catálogo propio, se pregunta en orden a Sesame (CDS), a los espejos de SIMBAD en Harvard y en Sudáfrica (IDIA) y a NED (NASA). Lo que se encuentra se guarda, así que sigue funcionando aunque esos servicios fallen más adelante. Pasó de verdad: a finales de octubre de 2026 el CDS de Estrasburgo quedó fuera de servicio por un incidente de ciberseguridad.",
       },
       {
+        term: "Si la imagen del visor no llega",
+        definition:
+          "Normalmente se analiza lo que ves en el visor. Si el visor no puede enviar su imagen, se pide la misma zona del cielo al servicio de recortes del CDS (hips2fits). Si ese servicio no responde, se descarga la misma zona y en la misma banda desde otro archivo: SDSS, DSS2 (STScI), GALEX (MAST) o 2MASS (IRSA). Nunca se cambia de banda: para WISE, rayos X o radio no hay alternativa y verás un aviso. El informe dice qué survey se usó de verdad.",
+      },
+      {
         term: "Créditos de los datos",
         definition:
           "El catálogo OpenNGC, de Mattia Verga (github.com/mattiaverga/OpenNGC), y la base de datos HYG v4.1, de astronexus (github.com/astronexus/HYG-Database), se usan bajo la licencia CC BY-SA 4.0. astronomIA también usa SIMBAD y Sesame (CDS, Estrasburgo), NED (NASA/IPAC), JPL Horizons (NASA), Open-Meteo y los surveys servidos por el CDS, IRSA y MAST.",
@@ -1064,6 +1069,11 @@ export const HELP_CONTENT_EN: HelpCategory[] = [
         term: "If an external catalogue does not respond",
         definition:
           "If an object is not in the own catalogue, Sesame (CDS), the SIMBAD mirrors at Harvard and in South Africa (IDIA) and NED (NASA) are asked in that order. Whatever is found is stored, so it keeps working even if those services fail later. It really happened: at the end of October 2026 the CDS in Strasbourg went offline after a cybersecurity incident.",
+      },
+      {
+        term: "If the viewer image does not arrive",
+        definition:
+          "Normally what you see in the viewer is analysed. If the viewer cannot send its image, the same field is requested from the CDS cutout service (hips2fits). If that service does not respond, the same field in the same band is downloaded from another archive: SDSS, DSS2 (STScI), GALEX (MAST) or 2MASS (IRSA). The band is never changed: for WISE, X-rays or radio there is no alternative and you will see a notice. The report says which survey was actually used.",
       },
       {
         term: "Data credits",
